@@ -1,0 +1,25 @@
+services:
+  store:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: 'Dockerfile'
+    depends_on:
+      db:
+        condition: 'service_healthy'
+    container_name: 'store'
+    ports:
+      - '8080:8080'
+  db:
+    container_name: 'db'
+    image: postgres:16.4
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    ports:
+      - '5432:5432'
