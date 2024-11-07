@@ -1,8 +1,10 @@
 package com.megatech.store.configuration;
 
 import com.megatech.store.exceptions.EntityNotFoundException;
+import com.megatech.store.exceptions.FieldConstraintViolationException;
 import com.megatech.store.exceptions.InvalidProductFieldException;
-import org.springframework.http.HttpEntity;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -10,10 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -23,6 +21,11 @@ public class ExceptionDispatcher {
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e) {
 
         return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FieldConstraintViolationException.class)
+    public ResponseEntity<?> handleFieldConstraintViolationException(FieldConstraintViolationException e) {
+        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidProductFieldException.class)
@@ -37,6 +40,11 @@ public class ExceptionDispatcher {
                 .collect(Collectors.joining("\n")).split("\n");
         String title = "Some validations got errors";
         return new ResponseEntity<>(new MultiErrorResponse(title, errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleConstraintsViolations(DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SingleErrorResponse("Some data provided are invalid"));
     }
 }
 
