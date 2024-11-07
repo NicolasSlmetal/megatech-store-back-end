@@ -1,6 +1,8 @@
 package com.megatech.store.service;
 
 import com.megatech.store.domain.Product;
+import com.megatech.store.dtos.products.DetailedProductDTO;
+import com.megatech.store.dtos.products.DisplayProductDTO;
 import com.megatech.store.dtos.products.InsertProductDTO;
 import com.megatech.store.dtos.products.UpdateProductDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
@@ -21,28 +23,28 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAll() {
+    public List<DisplayProductDTO> findAll() {
         List<ProductModel> productModels = productRepository.findAll();
-        return productModels.stream().map(Product::new).toList();
+        return productModels.stream().map(DisplayProductDTO::new).toList();
     }
 
-    public Product findById(Long id) {
-        Optional<Product> product = productRepository.findById(id).map(Product::new);
+    public DetailedProductDTO findById(Long id) {
+        Optional<DetailedProductDTO> product = productRepository.findById(id).map(DetailedProductDTO::new);
         return product.orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
     }
 
-    public Product save(InsertProductDTO productDTO) {
+    public DetailedProductDTO save(InsertProductDTO productDTO) {
         Product product = new Product(productDTO);
-        return new Product(productRepository.save(new ProductModel(product)));
+        return new DetailedProductDTO(productRepository.save(new ProductModel(product)));
     }
 
-    public Product update(UpdateProductDTO productDTO, Long id) {
+    public DetailedProductDTO update(UpdateProductDTO productDTO, Long id) {
         Product savedProduct = new Product(productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found")));
         savedProduct.update(productDTO);
         ProductModel updatedProductModel = new ProductModel(savedProduct);
         updatedProductModel.setId(id);
-        return new Product(productRepository.save(updatedProductModel));
+        return new DetailedProductDTO(productRepository.save(updatedProductModel));
     }
 
     public void delete(Long id){
