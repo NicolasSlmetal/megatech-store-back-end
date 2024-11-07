@@ -5,7 +5,9 @@ import com.megatech.store.dtos.products.UpdateProductDTO;
 import com.megatech.store.exceptions.InvalidProductFieldException;
 import com.megatech.store.model.ProductModel;
 
-public class Product {
+import java.time.LocalDateTime;
+
+public class Product  implements Cloneable {
 
     private Long id;
     private String name;
@@ -13,6 +15,7 @@ public class Product {
     private String manufacturer;
     private Double price;
     private Integer stockQuantity;
+    private LocalDateTime entryDate;
 
     public Product(InsertProductDTO productDTO) {
         setName(productDTO.name());
@@ -28,6 +31,7 @@ public class Product {
         setManufacturer(productModel.getManufacturer());
         setPrice(productModel.getPrice());
         setStockQuantity(productModel.getStockQuantity());
+        setEntryDate(productModel.getEntryDate());
     }
 
     public void update(UpdateProductDTO updateProductDTO) {
@@ -94,5 +98,25 @@ public class Product {
     public void setStockQuantity(Integer stockQuantity) {
         if (stockQuantity < 0) throw new InvalidProductFieldException("Stock quantity cannot be negative");
         this.stockQuantity = stockQuantity;
+    }
+
+    public LocalDateTime getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(LocalDateTime entryDate) {
+        if (entryDate == null) throw new InvalidProductFieldException("Entry date cannot be null");
+        if (entryDate.isAfter(LocalDateTime.now())) throw new InvalidProductFieldException("Entry date cannot be after now");
+        this.entryDate = entryDate;
+    }
+
+    @Override
+    public Product clone() {
+        try {
+            Product clone = (Product) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
