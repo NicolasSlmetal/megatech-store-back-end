@@ -1,0 +1,11 @@
+services:
+  store:
+    env_file:
+      - .env
+  db:
+    env_file:
+      - .env
+    volumes:
+      - prod-data:/var/lib/postgresql/data
+volumes:
+  prod-data:
