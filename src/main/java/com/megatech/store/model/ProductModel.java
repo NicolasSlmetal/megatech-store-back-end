@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Entity(name="product")
 @Table(name = "tb_product")
@@ -35,6 +39,11 @@ public class ProductModel {
 
     @Column(name = "prd_stock_quantity")
     private Integer stockQuantity;
+
+    @Column(name = "prd_entry_date", updatable = false)
+    @CreationTimestamp
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime entryDate;
 
     public ProductModel(Product product) {
         this.name = product.getName();
