@@ -19,7 +19,6 @@ public class ExceptionDispatcher {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e) {
-
         return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
@@ -31,7 +30,7 @@ public class ExceptionDispatcher {
     @ExceptionHandler(InvalidProductFieldException.class)
     public ResponseEntity<?> handleInvalidProductFieldException(InvalidProductFieldException e) {
         String prefix = "Failed operation in product: ";
-        return new ResponseEntity<>(new SingleErrorResponse(prefix +    e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
