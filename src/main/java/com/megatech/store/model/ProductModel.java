@@ -24,6 +24,9 @@ public class ProductModel {
     @Column(name = "prd_name")
     private String name;
 
+    @Column(name = "prd_image")
+    private String image;
+
     @Column(name = "prd_manufacturer")
     private String manufacturer;
 
@@ -35,6 +38,7 @@ public class ProductModel {
 
     public ProductModel(Product product) {
         this.name = product.getName();
+        this.image = product.getImage();
         this.manufacturer = product.getManufacturer();
         this.price = product.getPrice();
         this.stockQuantity = product.getStockQuantity();

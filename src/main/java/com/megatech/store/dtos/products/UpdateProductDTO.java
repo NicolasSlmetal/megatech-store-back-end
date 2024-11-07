@@ -7,6 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 public record UpdateProductDTO(
         String name,
+        String image,
         String manufacturer,
         @Positive(message = "price must be positive") Double price,
         @PositiveOrZero(message = "stockQuantity must be zero or higher") Integer stockQuantity

@@ -9,12 +9,14 @@ public class Product {
 
     private Long id;
     private String name;
+    private String image;
     private String manufacturer;
     private Double price;
     private Integer stockQuantity;
 
     public Product(InsertProductDTO productDTO) {
         setName(productDTO.name());
+        setImage(productDTO.image());
         setManufacturer(productDTO.manufacturer());
         setPrice(productDTO.price());
         setStockQuantity(productDTO.stockQuantity());
@@ -22,6 +24,7 @@ public class Product {
     public Product(ProductModel productModel) {
         setId(productModel.getId());
         setName(productModel.getName());
+        setImage(productModel.getImage());
         setManufacturer(productModel.getManufacturer());
         setPrice(productModel.getPrice());
         setStockQuantity(productModel.getStockQuantity());
@@ -36,6 +39,8 @@ public class Product {
             setStockQuantity(updateProductDTO.stockQuantity());
         if (updateProductDTO.manufacturer() != null)
             setManufacturer(updateProductDTO.manufacturer());
+        if (updateProductDTO.image() != null)
+            setImage(updateProductDTO.image());
     }
 
     public Long getId() {
@@ -44,6 +49,15 @@ public class Product {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        if (image == null || image.isEmpty()) throw new InvalidProductFieldException("Image cannot be null or empty");
+        this.image = image;
     }
 
     public Double getPrice() {
