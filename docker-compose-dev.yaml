@@ -1,8 +1,10 @@
 services:
   store:
+    container_name: dev-store
     env_file:
       - .env.devlopment.local
   db:
+    container_name: dev_db
     env_file:
       - .env.devlopment.local
     volumes:

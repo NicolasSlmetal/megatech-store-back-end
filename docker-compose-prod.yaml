@@ -1,8 +1,10 @@
 services:
   store:
+    container_name: megatech-store
     env_file:
       - .env
   db:
+    container_name: prod_db
     env_file:
       - .env
     volumes:
