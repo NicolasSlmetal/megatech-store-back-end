@@ -6,3 +6,4 @@ spring:
     password: ${DB_PASSWORD:postgres}
   flyway:
     locations: 'classpath:db/migration/prod'
+    validate-on-migrate: true
