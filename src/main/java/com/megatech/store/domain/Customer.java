@@ -15,6 +15,7 @@ public class Customer {
     private String cpf;
     private LocalDate registrationDate;
     private User user;
+    private Address address;
 
     public String getName() {
         return name;
@@ -64,6 +65,18 @@ public class Customer {
         }
         this.user = user;
     }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        if (address == null) {
+            throw new InvalidCustomerFieldException("Address cannot be null");
+        }
+        this.address = address;
+    }
+
 
     private void validateCpf(String cpf) {
 
