@@ -1,2 +1,2 @@
 #!/bin/bash
-docker compose -f docker-compose.yaml -f docker-compose-dev.yaml down --remove-orphans
+docker compose -f docker-compose.yaml -f docker-compose-dev.yaml down --remove-orphans -v
