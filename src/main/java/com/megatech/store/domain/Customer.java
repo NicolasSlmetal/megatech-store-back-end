@@ -3,6 +3,8 @@ package com.megatech.store.domain;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Customer {
@@ -15,7 +17,7 @@ public class Customer {
     private String cpf;
     private LocalDate registrationDate;
     private User user;
-    private Address address;
+    private final List<Address> addresses = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -66,15 +68,15 @@ public class Customer {
         this.user = user;
     }
 
-    public Address getAddress() {
-        return address;
+    public List<Address> getAddress() {
+        return addresses;
     }
 
-    public void setAddress(Address address) {
+    public void addAddress(Address address) {
         if (address == null) {
             throw new InvalidCustomerFieldException("Address cannot be null");
         }
-        this.address = address;
+        this.addresses.add(address);
     }
 
 
