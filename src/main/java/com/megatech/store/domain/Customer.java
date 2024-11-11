@@ -1,13 +1,18 @@
 package com.megatech.store.domain;
 
+import com.megatech.store.dtos.customer.CustomerDTO;
+import com.megatech.store.dtos.customer.InsertCustomerDTO;
+import com.megatech.store.dtos.customer.UpdateCustomerDTO;
+import com.megatech.store.dtos.user.UserDTO;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
+import com.megatech.store.model.CustomerModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Customer {
+public class Customer implements Cloneable {
 
     private static final int CPF_MAXIMUM_SIZE = 11;
     private static final int FIRST_CPF_DIGIT_POSITION = CPF_MAXIMUM_SIZE - 2;
@@ -18,6 +23,31 @@ public class Customer {
     private LocalDate registrationDate;
     private User user;
     private final List<Address> addresses = new ArrayList<>();
+
+    public Customer(InsertCustomerDTO insertCustomerDTO) {
+        setName(insertCustomerDTO.name());
+        setCpf(insertCustomerDTO.cpf());
+    }
+
+    public Customer(CustomerModel customerModel) {
+        setUser(new User(customerModel.getUser()));
+        setName(customerModel.getName());
+        setCpf(customerModel.getCpf());
+        setRegistrationDate(customerModel.getRegistrationDate());
+    }
+
+    public void update(UpdateCustomerDTO customerDTO) {
+        if (customerDTO.name() != null) {
+            setName(customerDTO.name());
+        }
+        if (customerDTO.email() != null) {
+            getUser().setEmail(customerDTO.email());
+        }
+
+        if (customerDTO.password() != null) {
+            getUser().setPassword(customerDTO.password());
+        }
+    }
 
     public String getName() {
         return name;
@@ -82,7 +112,7 @@ public class Customer {
 
     private void validateCpf(String cpf) {
 
-        String templateErrorMessage = String.format("CPF %s", cpf);
+        String templateErrorMessage = "CPF ";
 
 
         if (cpf.length() != CPF_MAXIMUM_SIZE) {
@@ -100,7 +130,7 @@ public class Customer {
         int[] remainders = calculateValidationDigits(cpf);
 
         if (remainders[0] != Character.getNumericValue(cpf.charAt(FIRST_CPF_DIGIT_POSITION))) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + " first validation digit is invalid");
+            throw new InvalidCustomerFieldException(templateErrorMessage + " is invalid");
         }
 
         if (remainders[1] != Character.getNumericValue(cpf.charAt(LAST_CPF_DIGIT_POSITION))) {
@@ -128,5 +158,16 @@ public class Customer {
             remainders[i] = remainders[i] == 10 ? 0 : remainders[i];
         }
         return remainders;
+    }
+
+    @Override
+    public Customer clone() {
+        try {
+            Customer clone = (Customer) super.clone();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
