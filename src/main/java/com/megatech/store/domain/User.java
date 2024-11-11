@@ -8,7 +8,7 @@ import com.megatech.store.model.UserModel;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class User {
+public class User implements Entity<UserDTO> {
 
     public static final String EMAIL_PATTERN = "^([A-Za-z0-9._-])+@([A-Za-z0-9]+\\.)+[A-Za-z]{2,6}$";
     private static final Map<Pattern, String> passwordErrorMapping = Map.of(
@@ -24,6 +24,10 @@ public class User {
     private String password;
     private Role role;
 
+    public User() {
+
+    }
+
     public User(UserDTO userDTO, Role role) {
         setEmail(userDTO.email());
         setPassword(userDTO.password());
@@ -35,6 +39,16 @@ public class User {
         setEmail(userModel.getEmail());
         setPassword(userModel.getPassword());
         setRole(userModel.getRole());
+    }
+
+    @Override
+    public void update(UserDTO updateDTO) {
+        if (updateDTO.email() != null) {
+            setEmail(updateDTO.email());
+        }
+        if (updateDTO.password() != null) {
+            setPassword(updateDTO.password());
+        }
     }
 
     public Long getId() {
@@ -96,5 +110,6 @@ public class User {
     private static boolean isValidEmail(String email) {
         return Pattern.compile(EMAIL_PATTERN).matcher(email).find();
     }
+
 
 }

@@ -1,6 +1,5 @@
 package com.megatech.store.domain;
 
-import com.megatech.store.dtos.customer.CustomerDTO;
 import com.megatech.store.dtos.customer.InsertCustomerDTO;
 import com.megatech.store.dtos.customer.UpdateCustomerDTO;
 import com.megatech.store.dtos.user.UserDTO;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Customer implements Cloneable {
+public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     private static final int CPF_MAXIMUM_SIZE = 11;
     private static final int FIRST_CPF_DIGIT_POSITION = CPF_MAXIMUM_SIZE - 2;
@@ -23,6 +22,10 @@ public class Customer implements Cloneable {
     private LocalDate registrationDate;
     private User user;
     private final List<Address> addresses = new ArrayList<>();
+
+    public Customer() {
+
+    }
 
     public Customer(InsertCustomerDTO insertCustomerDTO) {
         setName(insertCustomerDTO.name());
@@ -40,13 +43,7 @@ public class Customer implements Cloneable {
         if (customerDTO.name() != null) {
             setName(customerDTO.name());
         }
-        if (customerDTO.email() != null) {
-            getUser().setEmail(customerDTO.email());
-        }
-
-        if (customerDTO.password() != null) {
-            getUser().setPassword(customerDTO.password());
-        }
+        getUser().update(new UserDTO(customerDTO.email(), customerDTO.password()));
     }
 
     public String getName() {
@@ -98,7 +95,7 @@ public class Customer implements Cloneable {
         this.user = user;
     }
 
-    public List<Address> getAddress() {
+    public List<Address> getAddresses() {
         return addresses;
     }
 
@@ -116,25 +113,25 @@ public class Customer implements Cloneable {
 
 
         if (cpf.length() != CPF_MAXIMUM_SIZE) {
-            throw new InvalidCustomerFieldException(templateErrorMessage +" should have 11 digits");
+            throw new InvalidCustomerFieldException(templateErrorMessage +"should have 11 digits");
         }
 
         if (cpf.chars().distinct().count() == 1) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + " must don`t contain the same digit in all positions");
+            throw new InvalidCustomerFieldException(templateErrorMessage + "must don`t contain the same digit in all positions");
         }
 
         if (Pattern.compile("[^0-9]").matcher(cpf).find()) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + " contains invalid characters");
+            throw new InvalidCustomerFieldException(templateErrorMessage + "contains invalid characters");
         }
 
         int[] remainders = calculateValidationDigits(cpf);
 
         if (remainders[0] != Character.getNumericValue(cpf.charAt(FIRST_CPF_DIGIT_POSITION))) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + " is invalid");
+            throw new InvalidCustomerFieldException(templateErrorMessage + "is invalid");
         }
 
         if (remainders[1] != Character.getNumericValue(cpf.charAt(LAST_CPF_DIGIT_POSITION))) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + " second validation digit is invalid");
+            throw new InvalidCustomerFieldException(templateErrorMessage + "is invalid");
         }
 
     }

@@ -5,7 +5,7 @@ import com.megatech.store.exceptions.InvalidCustomerFieldException;
 
 import java.util.regex.Pattern;
 
-public class Address {
+public class Address implements Entity<AddressDTO> {
 
     public static final int ZIP_CODE_SIZE = 8;
     private Long id;
@@ -14,6 +14,10 @@ public class Address {
     private String city;
     private String state;
     private String zipcode;
+
+    public Address() {
+
+    }
 
     public Address(AddressDTO addressDTO) {
         setStreet(addressDTO.street());
@@ -92,5 +96,10 @@ public class Address {
             throw new InvalidCustomerFieldException("ZipCode contains illegal characters");
         }
         this.zipcode = zipcode;
+    }
+
+    @Override
+    public void update(AddressDTO updateDTO) {
+
     }
 }

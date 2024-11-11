@@ -7,7 +7,7 @@ import com.megatech.store.model.ProductModel;
 
 import java.time.LocalDateTime;
 
-public class Product  implements Cloneable {
+public class Product  implements Cloneable, Entity<UpdateProductDTO> {
 
     private Long id;
     private String name;
@@ -17,6 +17,9 @@ public class Product  implements Cloneable {
     private Integer stockQuantity;
     private LocalDateTime entryDate;
 
+    public Product() {
+
+    }
     public Product(InsertProductDTO productDTO) {
         setName(productDTO.name());
         setImage(productDTO.image());
