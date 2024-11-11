@@ -7,13 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "tb_address")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressModel {
+public class AddressModel implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerModel {
+public class CustomerModel implements Model {
 
     @Id
     @Column(name = "cst_id")
@@ -44,7 +44,7 @@ public class CustomerModel {
     public CustomerModel(Customer customer) {
         setName(customer.getName());
         setCpf(customer.getCpf());
-        setAddresses(customer.getAddress().stream().map(AddressModel::new).toList());
+        setAddresses(customer.getAddresses().stream().map(AddressModel::new).toList());
         getAddresses().forEach(addressModel -> addressModel.setCustomer(this));
         if (customer.getRegistrationDate() != null) {
             setRegistrationDate(customer.getRegistrationDate());

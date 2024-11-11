@@ -1,7 +1,6 @@
 package com.megatech.store.model;
 
 import com.megatech.store.domain.Product;
-import com.megatech.store.dtos.products.UpdateProductDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductModel {
+public class ProductModel implements Model {
 
     @Id
     @Column(name = "prd_id")
