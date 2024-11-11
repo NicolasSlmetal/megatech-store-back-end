@@ -1,5 +1,6 @@
 package com.megatech.store.dtos.products;
 
+import com.megatech.store.dtos.InputDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,5 +13,5 @@ public record InsertProductDTO(
         @NotNull(message = "price cannot be null") @Positive(message = "price must be positive") Double price,
         @NotNull(message = "stockQuantity cannot be null")
         @PositiveOrZero(message = "stockQuantity must be zero or higher") Integer stockQuantity
-        ) {
+        ) implements InputDTO {
 }
