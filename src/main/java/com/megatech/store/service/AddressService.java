@@ -1,12 +1,13 @@
 package com.megatech.store.service;
 
-import com.megatech.store.domain.Address;
+import com.megatech.store.dtos.address.AddressDTO;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 import com.megatech.store.model.AddressModel;
 import com.megatech.store.repository.AddressRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @Service
 public class AddressService {
@@ -17,15 +18,15 @@ public class AddressService {
         this.addressRepository = addressRepository;
     }
 
-    public void validateIfIsNotUsing(Address address) {
-        Optional<AddressModel> existingAddress = addressRepository
+    public void validateIfIsNotUsing(AddressDTO address) {
+        List<AddressModel> existingAddress = addressRepository
                 .findByStreetAndNumberAndCityAndStateAndZipcode(
-                        address.getStreet(),
-                        address.getNumber(),
-                        address.getCity(),
-                        address.getState(),
-                        address.getZipcode());
-        if (existingAddress.isPresent()) {
+                        address.street(),
+                        address.number(),
+                        address.city(),
+                        address.state(),
+                        address.zipcode());
+        if (!existingAddress.isEmpty()) {
             throw new InvalidCustomerFieldException("Address cannot be used");
         }
     }

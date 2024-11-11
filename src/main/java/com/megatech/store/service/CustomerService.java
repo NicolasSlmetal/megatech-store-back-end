@@ -9,6 +9,9 @@ import com.megatech.store.dtos.customer.InsertCustomerDTO;
 import com.megatech.store.dtos.customer.UpdateCustomerDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
+import com.megatech.store.factory.CustomerFactory;
+import com.megatech.store.factory.EntityModelFactory;
+import com.megatech.store.factory.ProductFactory;
 import com.megatech.store.model.CustomerModel;
 import com.megatech.store.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -22,11 +25,17 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final UserService userService;
     private final AddressService addressService;
+    private final EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory;
 
-    public CustomerService(CustomerRepository customerRepository, UserService userService, AddressService addressService) {
+    public CustomerService(CustomerRepository customerRepository,
+                           UserService userService,
+                           AddressService addressService,
+                           EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory) {
+
         this.customerRepository = customerRepository;
         this.userService = userService;
         this.addressService = addressService;
+        this.customerFactory = customerFactory;
     }
 
     public List<CustomerDTO> findAll() {
@@ -40,21 +49,13 @@ public class CustomerService {
         return new CustomerDTO(customerModel);
     }
 
-
-
     public CustomerDTO save(InsertCustomerDTO insertCustomerDTO) {
+        validateIfCpfIsUsed(insertCustomerDTO.cpf());
+        this.userService.validateIfEmailExists(insertCustomerDTO.user().email());
+        this.addressService.validateIfIsNotUsing(insertCustomerDTO.address());
 
-        Address address = new Address(insertCustomerDTO.address());
-        Customer customer = new Customer(insertCustomerDTO);
-        validateIfCpfIsUsed(customer.getCpf());
-        User user = new User(insertCustomerDTO.user(), Role.CUSTOMER);
-        customer.setUser(user);
-        this.userService.validateIfEmailExists(user.getEmail());
-
-        this.addressService.validateIfIsNotUsing(address);
-        customer.addAddress(address);
-
-        CustomerModel savedCustomer = customerRepository.save(new CustomerModel(customer));
+        Customer customer = customerFactory.createEntityFromDTO(insertCustomerDTO);
+        CustomerModel savedCustomer = customerRepository.save(customerFactory.createModelFromEntity(customer));
         return new CustomerDTO(savedCustomer);
     }
 
@@ -67,13 +68,17 @@ public class CustomerService {
     public CustomerDTO update(UpdateCustomerDTO customerDTO, Long id) {
         CustomerModel savedCustomerModel = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found"));
-        Customer customer = new Customer(savedCustomerModel);
+        Customer customer = customerFactory.createEntityFromModel(savedCustomerModel);
 
         Customer beforeUpdateCustomer = customer.clone();
         customer.update(customerDTO);
         includeValidations(beforeUpdateCustomer, customer);
 
-        return new CustomerDTO(customerRepository.save(new CustomerModel(customer)));
+        CustomerModel updatedCustomerModel = customerFactory.createModelFromEntity(customer);
+        updatedCustomerModel.setId(id);
+        updatedCustomerModel.getUser().setId(id);
+        updatedCustomerModel.setRegistrationDate(customer.getRegistrationDate());
+        return new CustomerDTO(customerRepository.save(updatedCustomerModel));
     }
 
     public void delete(Long id) {

@@ -7,22 +7,24 @@ import com.megatech.store.dtos.products.InsertProductDTO;
 import com.megatech.store.dtos.products.UpdateProductDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
 import com.megatech.store.exceptions.FieldConstraintViolationException;
+import com.megatech.store.factory.EntityModelFactory;
 import com.megatech.store.model.ProductModel;
 import com.megatech.store.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Service
 public class ProductService {
 
 
     private final ProductRepository productRepository;
+    private final EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory) {
         this.productRepository = productRepository;
+        this.productFactory = productFactory;
     }
 
     public List<DisplayProductDTO> findAll() {
@@ -48,20 +50,21 @@ public class ProductService {
     public DetailedProductDTO save(InsertProductDTO productDTO) {
         validateIfNameNotExists(productDTO.name());
         validateIfImageIsUsed(productDTO.image());
-        Product product = new Product(productDTO);
-        return new DetailedProductDTO(productRepository.save(new ProductModel(product)));
+        Product product = productFactory.createEntityFromDTO(productDTO);
+        return new DetailedProductDTO(productRepository.save(productFactory.createModelFromEntity(product)));
     }
 
     public DetailedProductDTO update(UpdateProductDTO productDTO, Long id) {
-        Product savedProduct = new Product(productRepository.findById(id)
+        Product savedProduct = productFactory.createEntityFromModel(productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found")));
 
         Product beforeUpdateProduct = savedProduct.clone();
         savedProduct.update(productDTO);
         applyNecessaryValidations(beforeUpdateProduct, savedProduct);
 
-        ProductModel updatedProductModel = new ProductModel(savedProduct);
+        ProductModel updatedProductModel = productFactory.createModelFromEntity(savedProduct);
         updatedProductModel.setId(id);
+        updatedProductModel.setEntryDate(savedProduct.getEntryDate());
         return new DetailedProductDTO(productRepository.save(updatedProductModel));
     }
 
