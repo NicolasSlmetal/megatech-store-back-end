@@ -1,6 +1,5 @@
 package com.megatech.store.controller;
 
-import com.megatech.store.domain.Product;
 import com.megatech.store.dtos.products.DetailedProductDTO;
 import com.megatech.store.dtos.products.DisplayProductDTO;
 import com.megatech.store.dtos.products.InsertProductDTO;
