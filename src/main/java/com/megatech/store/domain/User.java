@@ -1,7 +1,9 @@
 package com.megatech.store.domain;
 
+import com.megatech.store.dtos.user.UserDTO;
 import com.megatech.store.exceptions.InvalidProductFieldException;
 import com.megatech.store.exceptions.InvalidUserFieldException;
+import com.megatech.store.model.UserModel;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -21,6 +23,19 @@ public class User {
     private String email;
     private String password;
     private Role role;
+
+    public User(UserDTO userDTO, Role role) {
+        setEmail(userDTO.email());
+        setPassword(userDTO.password());
+        setRole(role);
+    }
+
+    public User(UserModel userModel){
+        setId(userModel.getId());
+        setEmail(userModel.getEmail());
+        setPassword(userModel.getPassword());
+        setRole(userModel.getRole());
+    }
 
     public Long getId() {
         return id;
