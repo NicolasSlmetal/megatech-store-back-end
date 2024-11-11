@@ -1,5 +1,6 @@
 package com.megatech.store.domain;
 
+import com.megatech.store.dtos.address.AddressDTO;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 
 import java.util.regex.Pattern;
@@ -12,7 +13,15 @@ public class Address {
     private Integer number;
     private String city;
     private String state;
-    private String zipCode;
+    private String zipcode;
+
+    public Address(AddressDTO addressDTO) {
+        setStreet(addressDTO.street());
+        setNumber(addressDTO.number());
+        setCity(addressDTO.city());
+        setState(addressDTO.state());
+        setZipCode(addressDTO.zipcode());
+    }
 
     public Long getId() {
         return id;
@@ -66,22 +75,22 @@ public class Address {
         }
         this.state = state;
     }
-    public String getZipCode() {
-        return zipCode;
+    public String getZipcode() {
+        return zipcode;
     }
 
-    public void setZipCode(String zipCode) {
-        if (zipCode == null || zipCode.isEmpty()) {
+    public void setZipCode(String zipcode) {
+        if (zipcode == null || zipcode.isEmpty()) {
             throw new InvalidCustomerFieldException("ZipCode cannot be null or empty");
         }
-        zipCode = zipCode.replace("-", "");
-        if (zipCode.length() != ZIP_CODE_SIZE) {
+        zipcode = zipcode.replace("-", "");
+        if (zipcode.length() != ZIP_CODE_SIZE) {
             throw new InvalidCustomerFieldException("ZipCode length must have length of 9");
         }
 
-        if (Pattern.compile("[^0-9]").matcher(zipCode).find()) {
+        if (Pattern.compile("[^0-9]").matcher(zipcode).find()) {
             throw new InvalidCustomerFieldException("ZipCode contains illegal characters");
         }
-        this.zipCode = zipCode;
+        this.zipcode = zipcode;
     }
 }
