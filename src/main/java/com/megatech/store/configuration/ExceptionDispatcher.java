@@ -1,8 +1,7 @@
 package com.megatech.store.configuration;
 
-import com.megatech.store.exceptions.EntityNotFoundException;
-import com.megatech.store.exceptions.FieldConstraintViolationException;
-import com.megatech.store.exceptions.InvalidProductFieldException;
+import com.megatech.store.exceptions.*;
+import jakarta.persistence.ElementCollection;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +29,22 @@ public class ExceptionDispatcher {
     @ExceptionHandler(InvalidProductFieldException.class)
     public ResponseEntity<?> handleInvalidProductFieldException(InvalidProductFieldException e) {
         String prefix = "Failed operation in product: ";
+        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidUserFieldException.class)
+    public ResponseEntity<?> handleInvalidUserFieldException(InvalidUserFieldException e) {
+        String[] messageArray = e.getMessage().split("\n");
+        if (messageArray.length > 1) {
+            return new ResponseEntity<>(new MultiErrorResponse("Got validations errors", messageArray), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new SingleErrorResponse(messageArray[0]), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCustomerFieldException.class)
+    public ResponseEntity<?> handleInvalidCustomerFieldException(InvalidCustomerFieldException e) {
+        String prefix = "Failed operation in customer: ";
         return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
