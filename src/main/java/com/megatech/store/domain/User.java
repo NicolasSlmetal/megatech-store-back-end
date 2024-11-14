@@ -65,6 +65,7 @@ public class User implements Entity<UserDTO> {
     }
 
     public void setEmail(String email) {
+        if (email == null) throw new InvalidUserFieldException("email cannot be null");
         if (!isValidEmail(email)) throw new InvalidUserFieldException("email is not following the right pattern");
         this.email = email;
     }
