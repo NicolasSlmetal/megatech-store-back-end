@@ -15,6 +15,7 @@ import com.megatech.store.factory.ProductFactory;
 import com.megatech.store.model.CustomerModel;
 import com.megatech.store.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class CustomerService {
         return new CustomerDTO(customerModel);
     }
 
+    @Transactional
     public CustomerDTO save(InsertCustomerDTO insertCustomerDTO) {
         validateIfCpfIsUsed(insertCustomerDTO.cpf());
         this.userService.validateIfEmailExists(insertCustomerDTO.user().email());
@@ -65,6 +67,7 @@ public class CustomerService {
         }
     }
 
+    @Transactional
     public CustomerDTO update(UpdateCustomerDTO customerDTO, Long id) {
         CustomerModel savedCustomerModel = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found"));
@@ -81,6 +84,7 @@ public class CustomerService {
         return new CustomerDTO(customerRepository.save(updatedCustomerModel));
     }
 
+    @Transactional
     public void delete(Long id) {
         if (!customerRepository.existsById(id)) {
             throw new EntityNotFoundException("Customer with id " + id + " not found");
