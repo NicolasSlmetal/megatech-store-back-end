@@ -9,8 +9,10 @@ import com.megatech.store.exceptions.EntityNotFoundException;
 import com.megatech.store.exceptions.FieldConstraintViolationException;
 import com.megatech.store.factory.EntityModelFactory;
 import com.megatech.store.model.ProductModel;
+import com.megatech.store.projections.TotalValueInStockPerProduct;
 import com.megatech.store.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +49,7 @@ public class ProductService {
             throw new FieldConstraintViolationException("Product with image " + imageName + " is invalid");
     }
 
+    @Transactional
     public DetailedProductDTO save(InsertProductDTO productDTO) {
         validateIfNameNotExists(productDTO.name());
         validateIfImageIsUsed(productDTO.image());
@@ -54,6 +57,7 @@ public class ProductService {
         return new DetailedProductDTO(productRepository.save(productFactory.createModelFromEntity(product)));
     }
 
+    @Transactional
     public DetailedProductDTO update(UpdateProductDTO productDTO, Long id) {
         Product savedProduct = productFactory.createEntityFromModel(productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found")));
@@ -77,8 +81,13 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public void delete(Long id){
         if (!productRepository.existsById(id)) throw new EntityNotFoundException("Product with id " + id + " not found");
         productRepository.deleteById(id);
+    }
+
+    public List<TotalValueInStockPerProduct> getTotalValueInStockPerProduct() {
+        return productRepository.getTotalValueInStockPerProduct();
     }
 }
