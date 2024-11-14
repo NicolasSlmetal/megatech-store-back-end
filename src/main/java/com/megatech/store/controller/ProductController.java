@@ -4,6 +4,7 @@ import com.megatech.store.dtos.products.DetailedProductDTO;
 import com.megatech.store.dtos.products.DisplayProductDTO;
 import com.megatech.store.dtos.products.InsertProductDTO;
 import com.megatech.store.dtos.products.UpdateProductDTO;
+import com.megatech.store.projections.TotalValueInStockPerProduct;
 import com.megatech.store.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<DetailedProductDTO> findById(@PathVariable("id") Long id){
         return ResponseEntity.ok(productService.findById(id));
+    }
+
+    @GetMapping("/totalValue")
+    public ResponseEntity<List<TotalValueInStockPerProduct>> getTotalValueInStockPerProduct(){
+        return ResponseEntity.ok(productService.getTotalValueInStockPerProduct());
     }
 
     @PostMapping
