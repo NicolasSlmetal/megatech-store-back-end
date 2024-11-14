@@ -49,6 +49,12 @@ public class CustomerFactory implements EntityModelFactory<Customer, CustomerMod
     @Override
     public CustomerModel createModelFromEntity(Customer entity) {
         CustomerModel model = new CustomerModel();
+        if (entity.getUser().getId() != null) {
+            model.setId(entity.getUser().getId());
+        }
+        if (entity.getRegistrationDate() != null) {
+            model.setRegistrationDate(entity.getRegistrationDate());
+        }
         model.setName(entity.getName());
         model.setCpf(entity.getCpf());
         model.setUser(userFactory.createModelFromEntity(entity.getUser()));
