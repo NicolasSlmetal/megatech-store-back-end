@@ -48,6 +48,18 @@ public class ExceptionDispatcher {
         return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidPurchaseFieldException.class)
+    public ResponseEntity<?> handleInvalidPurchaseFieldException(InvalidPurchaseFieldException e) {
+        String prefix = "Failed operation in purchase: ";
+        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TokenErrorException.class)
+    public ResponseEntity<?> handleTokenErrorException(TokenErrorException e) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), status);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationError(MethodArgumentNotValidException e) {
         String[] errors = e.getFieldErrors().stream().map(FieldError::getDefaultMessage)
