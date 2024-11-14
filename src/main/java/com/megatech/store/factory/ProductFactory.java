@@ -35,7 +35,12 @@ public class ProductFactory implements EntityModelFactory<Product, ProductModel,
     @Override
     public ProductModel createModelFromEntity(Product entity) {
         ProductModel model = new ProductModel();
-        model.setId(entity.getId());
+        if (entity.getId() != null) {
+            model.setId(entity.getId());
+        }
+        if (entity.getEntryDate() != null) {
+            model.setEntryDate(entity.getEntryDate());
+        }
         model.setName(entity.getName());
         model.setImage(entity.getImage());
         model.setPrice(entity.getPrice());
