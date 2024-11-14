@@ -1,9 +1,14 @@
 spring:
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    time-zone: UTC
   application:
     name: store
   server:
     port: ${API_PORT:8080}
   profiles:
     active: ${PROFILE:dev}
+api:
+  key: {API_KEY:1234}
 
 
