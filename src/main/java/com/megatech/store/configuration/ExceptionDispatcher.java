@@ -16,48 +16,9 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionDispatcher {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e) {
-        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(FieldConstraintViolationException.class)
-    public ResponseEntity<?> handleFieldConstraintViolationException(FieldConstraintViolationException e) {
-        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidProductFieldException.class)
-    public ResponseEntity<?> handleInvalidProductFieldException(InvalidProductFieldException e) {
-        String prefix = "Failed operation in product: ";
-        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidUserFieldException.class)
-    public ResponseEntity<?> handleInvalidUserFieldException(InvalidUserFieldException e) {
-        String[] messageArray = e.getMessage().split("\n");
-        if (messageArray.length > 1) {
-            return new ResponseEntity<>(new MultiErrorResponse("Got validations errors", messageArray), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(new SingleErrorResponse(messageArray[0]), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidCustomerFieldException.class)
-    public ResponseEntity<?> handleInvalidCustomerFieldException(InvalidCustomerFieldException e) {
-        String prefix = "Failed operation in customer: ";
-        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidPurchaseFieldException.class)
-    public ResponseEntity<?> handleInvalidPurchaseFieldException(InvalidPurchaseFieldException e) {
-        String prefix = "Failed operation in purchase: ";
-        return new ResponseEntity<>(new SingleErrorResponse(prefix + e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TokenErrorException.class)
-    public ResponseEntity<?> handleTokenErrorException(TokenErrorException e) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage()), status);
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<SingleErrorResponse> handleBaseException(BaseException e) {
+        return new ResponseEntity<>(new SingleErrorResponse(e.getMessage(), e.getErrorType()), e.getHttpStatus());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -65,19 +26,20 @@ public class ExceptionDispatcher {
         String[] errors = e.getFieldErrors().stream().map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("\n")).split("\n");
         String title = "Some validations got errors";
-        return new ResponseEntity<>(new MultiErrorResponse(title, errors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MultiErrorResponse(title, ErrorType.INVALID_REQUEST, errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleConstraintsViolations(DataIntegrityViolationException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SingleErrorResponse("Some data provided are invalid"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new SingleErrorResponse("Some data provided are invalid", ErrorType.UNKNOWN_EXISTING_DATA_ERROR));
     }
 }
 
-record SingleErrorResponse(String message) {
+record SingleErrorResponse(String message, ErrorType errorType) {
 
 }
 
-record MultiErrorResponse(String message, String[] errors) {
+record MultiErrorResponse(String message, ErrorType errorType, String[] errors) {
 
 }
