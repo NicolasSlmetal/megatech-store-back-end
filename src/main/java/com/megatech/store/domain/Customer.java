@@ -3,6 +3,8 @@ package com.megatech.store.domain;
 import com.megatech.store.dtos.customer.InsertCustomerDTO;
 import com.megatech.store.dtos.customer.UpdateCustomerDTO;
 import com.megatech.store.dtos.user.UserDTO;
+import com.megatech.store.exceptions.ErrorType;
+import com.megatech.store.exceptions.InvalidCPFException;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 import com.megatech.store.model.CustomerModel;
 
@@ -52,7 +54,7 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
-            throw new InvalidCustomerFieldException("Name cannot be null or empty");
+            throw new InvalidCustomerFieldException("Name cannot be null or empty", ErrorType.INVALID_CUSTOMER_NAME);
         }
         this.name = name;
     }
@@ -63,7 +65,7 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     public void setCpf(String cpf) {
         if (cpf == null || cpf.isEmpty()) {
-            throw new InvalidCustomerFieldException("CPF cannot be null or empty");
+            throw new InvalidCPFException("CPF cannot be null or empty");
         }
         cpf = cpf.replaceAll("[.-]", "");
         validateCpf(cpf);
@@ -76,10 +78,10 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     public void setRegistrationDate(LocalDate registrationDate) {
         if (registrationDate == null) {
-            throw new InvalidCustomerFieldException("Registration date cannot be null");
+            throw new InvalidCustomerFieldException("Registration date cannot be null", ErrorType.INVALID_DATE_PARAMETER);
         }
         if (registrationDate.isAfter(LocalDate.now())) {
-            throw new InvalidCustomerFieldException("Registration date cannot be after current date");
+            throw new InvalidCustomerFieldException("Registration date cannot be after current date", ErrorType.INVALID_DATE_PARAMETER);
         }
         this.registrationDate = registrationDate;
     }
@@ -90,7 +92,7 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     public void setUser(User user) {
         if (user == null) {
-            throw new InvalidCustomerFieldException("User cannot be null");
+            throw new InvalidCustomerFieldException("User cannot be null", ErrorType.INVALID_NULL_ATTRIBUTE);
         }
         this.user = user;
     }
@@ -101,7 +103,7 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
     public void addAddress(Address address) {
         if (address == null) {
-            throw new InvalidCustomerFieldException("Address cannot be null");
+            throw new InvalidCustomerFieldException("Address cannot be null", ErrorType.INVALID_NULL_ATTRIBUTE);
         }
         this.addresses.add(address);
     }
@@ -113,25 +115,25 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
 
 
         if (cpf.length() != CPF_MAXIMUM_SIZE) {
-            throw new InvalidCustomerFieldException(templateErrorMessage +"should have 11 digits");
+            throw new InvalidCPFException(templateErrorMessage +"should have 11 digits");
         }
 
         if (cpf.chars().distinct().count() == 1) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + "must don`t contain the same digit in all positions");
+            throw new InvalidCPFException(templateErrorMessage + "must don`t contain the same digit in all positions");
         }
 
         if (Pattern.compile("[^0-9]").matcher(cpf).find()) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + "contains invalid characters");
+            throw new InvalidCPFException(templateErrorMessage + "contains invalid characters");
         }
 
         int[] remainders = calculateValidationDigits(cpf);
 
         if (remainders[0] != Character.getNumericValue(cpf.charAt(FIRST_CPF_DIGIT_POSITION))) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + "is invalid");
+            throw new InvalidCPFException(templateErrorMessage + "is invalid");
         }
 
         if (remainders[1] != Character.getNumericValue(cpf.charAt(LAST_CPF_DIGIT_POSITION))) {
-            throw new InvalidCustomerFieldException(templateErrorMessage + "is invalid");
+            throw new InvalidCPFException(templateErrorMessage + "is invalid");
         }
 
     }

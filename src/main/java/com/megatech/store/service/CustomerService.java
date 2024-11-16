@@ -8,6 +8,7 @@ import com.megatech.store.dtos.customer.CustomerDTO;
 import com.megatech.store.dtos.customer.InsertCustomerDTO;
 import com.megatech.store.dtos.customer.UpdateCustomerDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 import com.megatech.store.factory.CustomerFactory;
 import com.megatech.store.factory.EntityModelFactory;
@@ -45,7 +46,7 @@ public class CustomerService {
 
     public CustomerDTO findById(Long id) {
         CustomerModel customerModel = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found", ErrorType.CUSTOMER_NOT_FOUND));
 
         return new CustomerDTO(customerModel);
     }
@@ -64,14 +65,14 @@ public class CustomerService {
     public void validateIfCpfIsUsed(String cpf){
         String cpfDigits = cpf.replaceAll("[^0-9]", "");
         if (customerRepository.existsByCpf(cpfDigits)){
-            throw new InvalidCustomerFieldException("CPF already exists");
+            throw new InvalidCustomerFieldException("CPF already exists", ErrorType.INVALID_CUSTOMER_CPF);
         }
     }
 
     @Transactional
     public CustomerDTO update(UpdateCustomerDTO customerDTO, Long id) {
         CustomerModel savedCustomerModel = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer with id " + id + " not found", ErrorType.CUSTOMER_NOT_FOUND));
         Customer customer = customerFactory.createEntityFromModel(savedCustomerModel);
 
         Customer beforeUpdateCustomer = customer.clone();
@@ -88,7 +89,7 @@ public class CustomerService {
     @Transactional
     public void delete(Long id) {
         if (!customerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Customer with id " + id + " not found");
+            throw new EntityNotFoundException("Customer with id " + id + " not found", ErrorType.CUSTOMER_NOT_FOUND);
         }
         customerRepository.deleteById(id);
     }

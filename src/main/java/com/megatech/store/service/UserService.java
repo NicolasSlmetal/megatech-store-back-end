@@ -2,6 +2,7 @@ package com.megatech.store.service;
 
 import com.megatech.store.dtos.login.LoginDTO;
 import com.megatech.store.dtos.login.TokenDTO;
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidUserFieldException;
 import com.megatech.store.model.UserModel;
 import com.megatech.store.repository.UserRepository;
@@ -20,10 +21,10 @@ public class UserService {
 
     public TokenDTO login(LoginDTO loginDTO) {
         UserModel user = userRepository.findByEmail(loginDTO.email())
-                .orElseThrow(() -> new InvalidUserFieldException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidUserFieldException("Invalid email or password", ErrorType.INVALID_LOGIN));
 
         if (!user.getPassword().equals(loginDTO.password())) {
-            throw new InvalidUserFieldException("Invalid email or password");
+            throw new InvalidUserFieldException("Invalid email or password", ErrorType.INVALID_LOGIN);
         }
 
         return new TokenDTO(tokenService.generateToken(user.getEmail(), user.getId()), user.getRole(), user.getId());
@@ -36,7 +37,7 @@ public class UserService {
 
     public void validateIfEmailExists(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new InvalidUserFieldException("Email %s are invalid".formatted(email));
+            throw new InvalidUserFieldException("Email %s are invalid".formatted(email), ErrorType.INVALID_USER_EMAIL);
         }
     }
 

@@ -7,6 +7,7 @@ import com.megatech.store.dtos.products.InsertProductDTO;
 import com.megatech.store.dtos.purchase.CartItemDTO;
 import com.megatech.store.dtos.purchase.InsertPurchaseDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.factory.EntityModelFactory;
 import com.megatech.store.model.CustomerModel;
 import com.megatech.store.model.ProductQuantityMappingModel;
@@ -35,7 +36,7 @@ public class PurchaseDependencyService {
     public Customer fetchCustomer(Long customerId) {
         return customerFactory
                 .createEntityFromModel(customerRepository.findById(customerId)
-                        .orElseThrow(() -> new EntityNotFoundException("Customer not found")));
+                        .orElseThrow(() -> new EntityNotFoundException("Customer not found", ErrorType.CUSTOMER_NOT_FOUND)));
     }
 
     public List<Product> fetchProducts(InsertPurchaseDTO insertPurchaseDTO) {
@@ -46,7 +47,7 @@ public class PurchaseDependencyService {
                 .map(productFactory::createEntityFromModel).toList();
 
         if (products.isEmpty() || products.size() != productsIds.size()) {
-            throw new EntityNotFoundException("Some product was not found");
+            throw new EntityNotFoundException("Some product was not found", ErrorType.PRODUCT_NOT_FOUND);
         }
 
         return products;

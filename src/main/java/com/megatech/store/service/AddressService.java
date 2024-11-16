@@ -1,6 +1,7 @@
 package com.megatech.store.service;
 
 import com.megatech.store.dtos.address.AddressDTO;
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
 import com.megatech.store.model.AddressModel;
 import com.megatech.store.repository.AddressRepository;
@@ -27,7 +28,7 @@ public class AddressService {
                         address.state(),
                         address.zipcode());
         if (!existingAddress.isEmpty()) {
-            throw new InvalidCustomerFieldException("Address cannot be used");
+            throw new InvalidCustomerFieldException("Address cannot be used", ErrorType.ADDRESS_ALREADY_EXISTS);
         }
     }
 }

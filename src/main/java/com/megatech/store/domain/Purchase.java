@@ -1,5 +1,6 @@
 package com.megatech.store.domain;
 
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidPurchaseFieldException;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class Purchase {
 
     public void setId(Long id) {
         if (id == null) {
-            throw new InvalidPurchaseFieldException("Id cannot be null");
+            throw new InvalidPurchaseFieldException("Id cannot be null", ErrorType.INVALID_ID);
         }
         this.id = id;
     }
@@ -31,7 +32,7 @@ public class Purchase {
 
     public void setCustomer(Customer customer) {
         if (customer == null) {
-            throw new InvalidPurchaseFieldException("Customer cannot be null");
+            throw new InvalidPurchaseFieldException("Customer cannot be null", ErrorType.INVALID_PURCHASE_CUSTOMER);
         }
         this.customer = customer;
     }
@@ -42,7 +43,7 @@ public class Purchase {
 
     public void addProductQuantityMapping(ProductQuantityMapping productQuantity) {
         if (productQuantity == null) {
-            throw new InvalidPurchaseFieldException("Mapping of product and their quantity cannot be null");
+            throw new InvalidPurchaseFieldException("Mapping of product and their quantity cannot be null", ErrorType.INVALID_PURCHASE_MAPPING);
         }
         productQuantityMappings.add(productQuantity);
     }
@@ -53,10 +54,10 @@ public class Purchase {
 
     public void setDate(LocalDateTime date) {
         if (date == null) {
-            throw new InvalidPurchaseFieldException("Date cannot be null");
+            throw new InvalidPurchaseFieldException("Date cannot be null", ErrorType.INVALID_DATE_PARAMETER);
         }
         if (date.isAfter(LocalDateTime.now())) {
-            throw new InvalidPurchaseFieldException("Date cannot be after now");
+            throw new InvalidPurchaseFieldException("Date cannot be after now", ErrorType.INVALID_DATE_PARAMETER);
         }
         this.date = date;
     }

@@ -1,6 +1,7 @@
 package com.megatech.store.domain;
 
 
+import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidPurchaseFieldException;
 
 public class ProductQuantityMapping {
@@ -19,13 +20,13 @@ public class ProductQuantityMapping {
 
     private void setQuantity(Integer quantity) {
         if (quantity == null) {
-            throw new InvalidPurchaseFieldException("quantity cannot be null");
+            throw new InvalidPurchaseFieldException("quantity cannot be null", ErrorType.INVALID_PURCHASE_QUANTITY);
         }
         if (quantity < 0) {
-            throw new InvalidPurchaseFieldException("quantity cannot be negative");
+            throw new InvalidPurchaseFieldException("quantity cannot be negative", ErrorType.INVALID_PURCHASE_QUANTITY);
         }
         if (product == null || quantity > product.getStockQuantity()) {
-            throw new InvalidPurchaseFieldException("quantity cannot be greater than product");
+            throw new InvalidPurchaseFieldException("quantity cannot be greater than product", ErrorType.INVALID_PURCHASE_QUANTITY);
         }
         this.quantity = quantity;
     }
@@ -36,7 +37,7 @@ public class ProductQuantityMapping {
 
     public void setProduct(Product product) {
         if (product == null) {
-            throw new InvalidPurchaseFieldException("product cannot be null");
+            throw new InvalidPurchaseFieldException("product cannot be null", ErrorType.INVALID_NULL_ATTRIBUTE);
         }
         this.product = product;
     }

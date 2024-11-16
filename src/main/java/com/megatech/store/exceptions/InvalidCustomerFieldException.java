@@ -1,7 +1,11 @@
 package com.megatech.store.exceptions;
 
-public class InvalidCustomerFieldException extends RuntimeException {
-    public InvalidCustomerFieldException(String message) {
-        super(message);
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class InvalidCustomerFieldException extends BaseException {
+    public InvalidCustomerFieldException(String message, ErrorType errorType) {
+        super(message, errorType, HttpStatus.BAD_REQUEST);
     }
 }
