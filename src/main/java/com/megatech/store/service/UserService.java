@@ -26,7 +26,7 @@ public class UserService {
             throw new InvalidUserFieldException("Invalid email or password");
         }
 
-        return new TokenDTO(tokenService.generateToken(user.getEmail(), user.getId()), user.getRole());
+        return new TokenDTO(tokenService.generateToken(user.getEmail(), user.getId()), user.getRole(), user.getId());
     }
 
     public void verifyAuth(String token) {

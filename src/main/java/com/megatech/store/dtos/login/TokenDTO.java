@@ -4,6 +4,7 @@ import com.megatech.store.domain.Role;
 
 public record TokenDTO (
         String token,
-        Role role
+        Role role,
+        Long id
 ) {
 }
