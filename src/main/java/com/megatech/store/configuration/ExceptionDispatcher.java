@@ -36,10 +36,10 @@ public class ExceptionDispatcher {
     }
 }
 
-record SingleErrorResponse(String message, ErrorType errorType) {
+record SingleErrorResponse(String message, ErrorType code) {
 
 }
 
-record MultiErrorResponse(String message, ErrorType errorType, String[] errors) {
+record MultiErrorResponse(String message, ErrorType code, String[] errors) {
 
 }
