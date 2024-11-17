@@ -70,6 +70,7 @@ public class PurchaseService {
         PurchaseModel savedPurchaseModel = purchaseRepository.save(purchaseModel);
         savedPurchaseModel.getMappingProductQuantity()
                 .forEach(mappingProductQuantity -> {
+                    mappingProductQuantity.getCompositeKey().setPurchaseId(savedPurchaseModel.getId());
                     purchaseRepository.insertMappingProductsQuantities(savedPurchaseModel.getId(), mappingProductQuantity.getProduct().getId(), mappingProductQuantity.getQuantity());
                     purchaseDependencyService
                         .decreaseStockQuantity(mappingProductQuantity);
