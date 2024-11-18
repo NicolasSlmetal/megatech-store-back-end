@@ -31,8 +31,13 @@ public class ProductService {
     }
 
     public List<DisplayProductDTO> findAll() {
-        List<ProductModel> productModels = productRepository.findAll();
+        List<ProductModel> productModels = productRepository.findAllByStockQuantityGreaterThanZero();
         return productModels.stream().map(DisplayProductDTO::new).toList();
+    }
+
+    public List<DetailedProductDTO> findAllWhereStockIsZero() {
+        List<ProductModel> productModels = productRepository.findAllByStockQuantityEqualZero();
+        return productModels.stream().map(DetailedProductDTO::new).toList();
     }
 
     public DetailedProductDTO findById(Long id) {
@@ -85,7 +90,7 @@ public class ProductService {
     @Transactional
     public void delete(Long id){
         if (!productRepository.existsById(id)) throw new EntityNotFoundException("Product with id " + id + " not found", ErrorType.PRODUCT_NOT_FOUND);
-        productRepository.deleteById(id);
+        productRepository.redefineStockQuantity(id);
     }
 
     public List<TotalValueInStockPerProduct> getTotalValueInStockPerProduct() {
