@@ -29,6 +29,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll());
     }
 
+    @GetMapping("/zero")
+    public ResponseEntity<List<DetailedProductDTO>> findAllWhereStockIsZero() {
+        return ResponseEntity.ok(productService.findAllWhereStockIsZero());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<DetailedProductDTO> findById(@PathVariable("id") Long id){
         return ResponseEntity.ok(productService.findById(id));
