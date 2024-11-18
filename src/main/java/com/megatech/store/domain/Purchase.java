@@ -12,8 +12,10 @@ public class Purchase {
 
     private Long id;
     private Customer customer;
+    private Double totalValue;
     private final Set<ProductQuantityMapping> productQuantityMappings = new HashSet<>();
     private LocalDateTime date;
+
 
     public Long getId() {
         return id;
@@ -35,6 +37,24 @@ public class Purchase {
             throw new InvalidPurchaseFieldException("Customer cannot be null", ErrorType.INVALID_PURCHASE_CUSTOMER);
         }
         this.customer = customer;
+    }
+
+    public Double getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue() {
+        double totalValue = 0.0;
+        for (ProductQuantityMapping productQuantityMapping : productQuantityMappings) {
+            totalValue += productQuantityMapping.getQuantity() * productQuantityMapping.getProduct().getPrice();
+        }
+        if (totalValue == 0) {
+            throw new InvalidPurchaseFieldException("No products were add in purchase", ErrorType.INVALID_PURCHASE_MAPPING);
+        }
+        if (totalValue < 0) {
+            throw new InvalidPurchaseFieldException("Total value cannot be negative", ErrorType.INVALID_PURCHASE_MAPPING);
+        }
+        this.totalValue = totalValue;
     }
 
     public Set<ProductQuantityMapping> getProductQuantityMappings() {

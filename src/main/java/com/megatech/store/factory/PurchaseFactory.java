@@ -37,6 +37,7 @@ public class PurchaseFactory {
                 .stream()
                 .map(product -> new ProductQuantityMapping(product, mappingProductsQuantities.get(product)))
                 .forEach(purchase::addProductQuantityMapping);
+        purchase.setTotalValue();
         return purchase;
     }
 
@@ -58,20 +59,8 @@ public class PurchaseFactory {
                     model.setProduct(productFactory.createModelFromEntity(mappingProductQuantity.getProduct()));
                     return model;
                 }).collect(Collectors.toSet()));
+        purchaseModel.setTotalValue(purchase.getTotalValue());
         return purchaseModel;
-    }
-
-    public Purchase createEntityFromModel(PurchaseModel purchaseModel) {
-        Purchase purchase = new Purchase();
-        purchase.setId(purchaseModel.getId());
-        purchase.setDate(purchaseModel.getDate());
-        purchase.setCustomer(customerFactory.createEntityFromModel(purchaseModel.getCustomer()));
-        purchaseModel
-                .getMappingProductQuantity().forEach(productQuantityModel ->
-                    purchase.addProductQuantityMapping(new ProductQuantityMapping(productFactory.createEntityFromModel(productQuantityModel.getProduct()),
-                            productQuantityModel.getQuantity()))
-                );
-        return purchase;
     }
 
     public PurchaseDTO createDTOFromModel(PurchaseModel purchaseModel) {
@@ -80,7 +69,7 @@ public class PurchaseFactory {
                 .stream()
                 .map(mappingProductQuantityModel ->
                         new ProductQuantityDTO(new DisplayProductDTO(mappingProductQuantityModel.getProduct()), mappingProductQuantityModel.getQuantity())).collect(Collectors.toSet());
-        return new PurchaseDTO(productQuantityDTOS, purchaseModel.getCustomer().getName(), purchaseModel.getDate());
+        return new PurchaseDTO(productQuantityDTOS, purchaseModel.getCustomer().getName(), purchaseModel.getDate(), purchaseModel.getTotalValue());
     }
 
 

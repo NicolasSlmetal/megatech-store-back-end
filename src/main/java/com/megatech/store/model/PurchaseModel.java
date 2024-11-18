@@ -33,4 +33,7 @@ public class PurchaseModel implements Model {
     @ManyToOne
     @JoinColumn(name="pre_customer_id")
     private CustomerModel customer;
+
+    @Column(name="pre_total_value")
+    private Double totalValue;
 }

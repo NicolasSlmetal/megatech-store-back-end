@@ -20,12 +20,14 @@ public interface PurchaseRepository extends JpaRepository<PurchaseModel, Long> {
     @Query(value = "SELECT " +
             "p.prd_id as productId, " +
             "p.prd_name as productName, " +
-            "SUM(p.prd_price * tpp.tpp_quantity) as totalValue," +
+            "SUM(pre.pre_total_value) as totalValue," +
             "SUM(tpp.tpp_quantity) as quantitySold " +
             "FROM " +
             "tb_purchase_product tpp" +
             " INNER JOIN tb_product p" +
             " ON tpp.tpp_prd_id = p.prd_id" +
+            " INNER JOIN tb_purchase pre" +
+            " ON tpp.tpp_pre_id = pre.pre_id" +
             " GROUP BY p.prd_id", nativeQuery = true)
     List<TotalValueSoldPerProduct> getTotalValueSoldPerProduct();
 

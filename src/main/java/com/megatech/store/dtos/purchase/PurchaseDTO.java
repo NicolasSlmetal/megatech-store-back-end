@@ -6,6 +6,7 @@ import java.util.Set;
 public record PurchaseDTO(
         Set<ProductQuantityDTO> productQuantities,
         String customerName,
-        LocalDateTime date
+        LocalDateTime date,
+        Double totalValue
 ) {
 }
