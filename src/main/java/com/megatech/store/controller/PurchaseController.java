@@ -1,9 +1,10 @@
 package com.megatech.store.controller;
 
-import com.megatech.store.domain.Purchase;
 import com.megatech.store.dtos.purchase.InsertPurchaseDTO;
 import com.megatech.store.dtos.purchase.PurchaseDTO;
 import com.megatech.store.projections.TotalValueSoldPerProduct;
+import com.megatech.store.security.UserAuthentication;
+import com.megatech.store.security.UserAuthenticationService;
 import com.megatech.store.service.PurchaseService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,21 +19,25 @@ import java.util.List;
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
+    private final UserAuthenticationService userAuthenticationService;
 
-    public PurchaseController(PurchaseService purchaseService) {
+    public PurchaseController(PurchaseService purchaseService, UserAuthenticationService userAuthenticationService) {
         this.purchaseService = purchaseService;
+        this.userAuthenticationService = userAuthenticationService;
     }
 
     @PostMapping
     public ResponseEntity<PurchaseDTO> insertPurchase(@RequestBody @Valid InsertPurchaseDTO purchaseDTO, UriComponentsBuilder uriBuilder) {
-        PurchaseDTO purchase = purchaseService.insertPurchase(purchaseDTO);
-        URI uri = uriBuilder.path("/{id}").buildAndExpand(purchase).toUri();
+        UserAuthentication authentication = userAuthenticationService.getCurrentUser();
+        PurchaseDTO purchase = purchaseService.insertPurchase(purchaseDTO, authentication.getUser().getId());
+        URI uri = uriBuilder.path("/me").buildAndExpand(purchase).toUri();
         return ResponseEntity.created(uri).body(purchase);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<PurchaseDTO>> findByCustomerId(@PathVariable("id") Long customerId) {
-        return ResponseEntity.ok(purchaseService.findByCustomerId(customerId));
+    @GetMapping("/me")
+    public ResponseEntity<List<PurchaseDTO>> findByCustomerId() {
+        UserAuthentication authentication = userAuthenticationService.getCurrentUser();
+        return ResponseEntity.ok(purchaseService.findByCustomerId(authentication.getUser().getId()));
     }
 
     @GetMapping("/totalValue")
