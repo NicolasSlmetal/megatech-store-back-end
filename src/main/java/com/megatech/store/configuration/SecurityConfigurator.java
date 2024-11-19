@@ -19,10 +19,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfigurator {
 
-    private AuthenticationFilter authenticationFilter;
+    private final AuthenticationFilter authenticationFilter;
+    private final DeniedErrorHandler deniedErrorHandler;
+    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
 
-    public SecurityConfigurator(AuthenticationFilter authenticationFilter) {
+    public SecurityConfigurator(AuthenticationFilter authenticationFilter, DeniedErrorHandler deniedErrorHandler, UnauthorizedEntryPoint unauthorizedEntryPoint) {
         this.authenticationFilter = authenticationFilter;
+        this.deniedErrorHandler = deniedErrorHandler;
+        this.unauthorizedEntryPoint = unauthorizedEntryPoint;
     }
 
     private static final String PRODUCT_ENDPOINT = "/products";
@@ -31,6 +35,10 @@ public class SecurityConfigurator {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling( handler ->
+                        handler
+                                .accessDeniedHandler(deniedErrorHandler)
+                                .authenticationEntryPoint(unauthorizedEntryPoint))
                 .cors(cors -> cors.configure(http))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
