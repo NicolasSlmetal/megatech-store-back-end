@@ -9,7 +9,7 @@ import com.megatech.store.model.UserModel;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class User implements Entity<UserDTO> {
+public class User implements Entity<UserDTO>, Cloneable {
 
     public static final String EMAIL_PATTERN = "^([A-Za-z0-9._-])+@([A-Za-z0-9]+\\.)+[A-Za-z]{2,6}$";
     private static final Map<Pattern, String> passwordErrorMapping = Map.of(
@@ -40,6 +40,11 @@ public class User implements Entity<UserDTO> {
         setEmail(userModel.getEmail());
         setPassword(userModel.getPassword());
         setRole(userModel.getRole());
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override
