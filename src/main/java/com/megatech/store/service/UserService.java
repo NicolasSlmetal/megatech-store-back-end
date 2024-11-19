@@ -29,7 +29,7 @@ public class UserService {
             throw new InvalidUserFieldException("Invalid email or password", ErrorType.INVALID_LOGIN);
         }
 
-        return new TokenDTO(tokenService.generateToken(user));
+        return new TokenDTO(tokenService.generateToken(user), user.getRole());
     }
 
     public void validateIfEmailExists(String email) {
