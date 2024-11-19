@@ -163,7 +163,8 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
     public Customer clone() {
         try {
             Customer clone = (Customer) super.clone();
-
+            User userClone = (User) this.getUser().clone();
+            clone.setUser(userClone);
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
