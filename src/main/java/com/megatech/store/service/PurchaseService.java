@@ -35,8 +35,8 @@ public class PurchaseService {
     }
 
     @Transactional
-    public PurchaseDTO insertPurchase(InsertPurchaseDTO insertPurchaseDTO) {
-        Customer savedCustomer = purchaseDependencyService.fetchCustomer(insertPurchaseDTO.customerId());
+    public PurchaseDTO insertPurchase(InsertPurchaseDTO insertPurchaseDTO, Long customerId) {
+        Customer savedCustomer = purchaseDependencyService.fetchCustomer(customerId);
         List<Product> products = purchaseDependencyService.fetchProducts(insertPurchaseDTO);
         Map<Product, Integer> groupQuantityByProduct =
                 insertPurchaseDTO
