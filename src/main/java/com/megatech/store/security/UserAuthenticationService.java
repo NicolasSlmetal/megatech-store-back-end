@@ -7,6 +7,7 @@ import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.factory.EntityModelFactory;
 import com.megatech.store.model.UserModel;
 import com.megatech.store.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +22,11 @@ public class UserAuthenticationService implements UserDetailsService {
     public UserAuthenticationService(UserRepository userRepository, EntityModelFactory<User, UserModel, UserDTO> userFactory) {
         this.userRepository = userRepository;
         this.userFactory = userFactory;
+    }
+
+    public UserAuthentication getCurrentUser() {
+        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
+        return (UserAuthentication) loadUserByUsername(principal);
     }
 
     @Override
