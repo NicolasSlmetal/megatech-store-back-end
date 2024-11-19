@@ -6,7 +6,6 @@ import com.megatech.store.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,11 +35,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = getAuthenticationContext(user);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                if (request.getServletPath().endsWith("/id")) {
-                    HttpServletRequestWrapper redirectHttpRequest = includeUserId(request, user);
-                    filterChain.doFilter(redirectHttpRequest, response);
-                    return;
-                }
 
             } catch (TokenErrorException tokenErrorException) {
                 filterChain.doFilter(request, response);
@@ -49,15 +43,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private static HttpServletRequestWrapper includeUserId(HttpServletRequest request, UserAuthentication user) {
-        if (request.getServletPath().startsWith("/customers") || request.getServletPath().startsWith("/purchases")) {
-            String uri = request.getRequestURI();
-            String newUri = uri.replace("id", user.getUser().getId().toString());
-            return new RedirectHttpRequest(request, newUri);
-        }
-        return new HttpServletRequestWrapper(request);
     }
 
     private static UsernamePasswordAuthenticationToken getAuthenticationContext(UserDetails user) {
