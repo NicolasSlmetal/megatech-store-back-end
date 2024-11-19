@@ -105,9 +105,9 @@ public class CustomerService {
 
     private String generateHashIfNewPasswordIsSet(Customer beforeUpdateCustomer, Customer customer) {
         String hashedOldPassword = beforeUpdateCustomer.getUser().getPassword();
-        if (!BCrypt.checkpw(customer.getUser().getPassword(), hashedOldPassword)) {
+        if (!hashedOldPassword.equals(customer.getUser().getPassword())) {
             return BCrypt.hashpw(customer.getUser().getPassword(), BCrypt.gensalt());
         }
-        return beforeUpdateCustomer.getUser().getPassword();
+        return hashedOldPassword;
     }
 }
