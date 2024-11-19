@@ -77,7 +77,7 @@ public class CustomerService {
 
         Customer beforeUpdateCustomer = customer.clone();
         customer.update(customerDTO);
-        includeValidations(beforeUpdateCustomer, customer);
+        validateForUpdatedFields(beforeUpdateCustomer, customer);
 
         CustomerModel updatedCustomerModel = customerFactory.createModelFromEntity(customer);
         updatedCustomerModel.setId(id);
@@ -97,13 +97,13 @@ public class CustomerService {
         customerRepository.deleteById(id);
     }
 
-    private void includeValidations(Customer beforeUpdateCustomer, Customer customer) {
+    public void validateForUpdatedFields(Customer beforeUpdateCustomer, Customer customer) {
         if (!beforeUpdateCustomer.getUser().getEmail().equals(customer.getUser().getEmail())) {
             userService.validateIfEmailExists(customer.getUser().getEmail());
         }
     }
 
-    private String generateHashIfNewPasswordIsSet(Customer beforeUpdateCustomer, Customer customer) {
+    public String generateHashIfNewPasswordIsSet(Customer beforeUpdateCustomer, Customer customer) {
         String hashedOldPassword = beforeUpdateCustomer.getUser().getPassword();
         if (!hashedOldPassword.equals(customer.getUser().getPassword())) {
             return BCrypt.hashpw(customer.getUser().getPassword(), BCrypt.gensalt());
