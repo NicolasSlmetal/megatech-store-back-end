@@ -19,7 +19,7 @@ import java.io.IOException;
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-
+    private static final String jsonErrorTemplate = "{\"message\":\"%s\", \"code\":\"%s\"}";
     private final TokenService tokenService;
     public AuthenticationFilter(TokenService tokenService) {
         this.tokenService = tokenService;
@@ -33,11 +33,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             try {
                 UserAuthentication user = new UserAuthentication(tokenService.verifyToken(token));
                 Authentication authentication = getAuthenticationContext(user);
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (TokenErrorException tokenErrorException) {
-                filterChain.doFilter(request, response);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write(String.format(jsonErrorTemplate, tokenErrorException.getMessage(), tokenErrorException.getErrorType()));
                 return;
             }
         }
