@@ -6,6 +6,7 @@ import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidUserFieldException;
 import com.megatech.store.model.UserModel;
 import com.megatech.store.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,16 +24,12 @@ public class UserService {
         UserModel user = userRepository.findByEmail(loginDTO.email())
                 .orElseThrow(() -> new InvalidUserFieldException("Invalid email or password", ErrorType.INVALID_LOGIN));
 
-        if (!user.getPassword().equals(loginDTO.password())) {
+
+        if (!BCrypt.checkpw(loginDTO.password(), user.getPassword())) {
             throw new InvalidUserFieldException("Invalid email or password", ErrorType.INVALID_LOGIN);
         }
 
-        return new TokenDTO(tokenService.generateToken(user.getEmail(), user.getId()), user.getRole(), user.getId());
-    }
-
-    public void verifyAuth(String token) {
-        token = token.replace("Bearer ", "");
-        tokenService.verifyToken(token);
+        return new TokenDTO(tokenService.generateToken(user));
     }
 
     public void validateIfEmailExists(String email) {
