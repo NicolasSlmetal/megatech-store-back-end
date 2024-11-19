@@ -1,0 +1,2 @@
+ALTER TABLE tb_user
+    ALTER COLUMN user_password TYPE VARCHAR(255);
