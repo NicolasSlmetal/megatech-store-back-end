@@ -12,9 +12,6 @@ public record InsertPurchaseDTO(
 
         @NotNull(message = "product list cannot be null")
         @NotEmpty(message = "product list cannot be empty")
-        Set<@Valid CartItemDTO> products,
-        @NotNull(message = "customer cannot be null")
-        @Positive(message = "customer reference is invalid")
-        Long customerId
+        Set<@Valid CartItemDTO> products
 ) implements InputDTO {
 }
