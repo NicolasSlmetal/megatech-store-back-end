@@ -1,20 +1,16 @@
 package com.megatech.store.service;
 
-import com.megatech.store.domain.Address;
 import com.megatech.store.domain.Customer;
-import com.megatech.store.domain.Role;
-import com.megatech.store.domain.User;
 import com.megatech.store.dtos.customer.CustomerDTO;
 import com.megatech.store.dtos.customer.InsertCustomerDTO;
 import com.megatech.store.dtos.customer.UpdateCustomerDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
 import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
-import com.megatech.store.factory.CustomerFactory;
 import com.megatech.store.factory.EntityModelFactory;
-import com.megatech.store.factory.ProductFactory;
 import com.megatech.store.model.CustomerModel;
 import com.megatech.store.repository.CustomerRepository;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +54,11 @@ public class CustomerService {
         this.addressService.validateIfIsNotUsing(insertCustomerDTO.address());
 
         Customer customer = customerFactory.createEntityFromDTO(insertCustomerDTO);
-        CustomerModel savedCustomer = customerRepository.save(customerFactory.createModelFromEntity(customer));
+
+        CustomerModel beforeSaveCustomerModel = customerFactory.createModelFromEntity(customer);
+        String hash = BCrypt.hashpw(insertCustomerDTO.user().password(), BCrypt.gensalt());
+        beforeSaveCustomerModel.getUser().setPassword(hash);
+        CustomerModel savedCustomer = customerRepository.save(beforeSaveCustomerModel);
         return new CustomerDTO(savedCustomer);
     }
 
@@ -83,6 +83,9 @@ public class CustomerService {
         updatedCustomerModel.setId(id);
         updatedCustomerModel.getUser().setId(id);
         updatedCustomerModel.setRegistrationDate(customer.getRegistrationDate());
+
+        String hash = generateHashIfNewPasswordIsSet(beforeUpdateCustomer, customer);
+        updatedCustomerModel.getUser().setPassword(hash);
         return new CustomerDTO(customerRepository.save(updatedCustomerModel));
     }
 
@@ -98,5 +101,13 @@ public class CustomerService {
         if (!beforeUpdateCustomer.getUser().getEmail().equals(customer.getUser().getEmail())) {
             userService.validateIfEmailExists(customer.getUser().getEmail());
         }
+    }
+
+    private String generateHashIfNewPasswordIsSet(Customer beforeUpdateCustomer, Customer customer) {
+        String hashedOldPassword = beforeUpdateCustomer.getUser().getPassword();
+        if (!BCrypt.checkpw(customer.getUser().getPassword(), hashedOldPassword)) {
+            return BCrypt.hashpw(customer.getUser().getPassword(), BCrypt.gensalt());
+        }
+        return beforeUpdateCustomer.getUser().getPassword();
     }
 }
