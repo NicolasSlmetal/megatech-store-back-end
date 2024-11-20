@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<ProductModel, Long> {
 
     @Modifying
     @Query(value = "UPDATE tb_product SET prd_stock_quantity = 0 WHERE prd_id = ?1", nativeQuery = true)
-    void redefineStockQuantity(Long productId);
+    void emptyStockQuantity(Long productId);
 
     @Query(value = "SELECT " +
             "p.prd_id as productId, " +

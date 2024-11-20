@@ -78,7 +78,7 @@ public class ProductService {
         return new DetailedProductDTO(productRepository.save(updatedProductModel));
     }
 
-    private void applyNecessaryValidations(Product beforeUpdate, Product afterUpdate) {
+    public void applyNecessaryValidations(Product beforeUpdate, Product afterUpdate) {
         if (!beforeUpdate.getName().equals(afterUpdate.getName())) {
             validateIfNameNotExists(afterUpdate.getName());
         }
@@ -88,9 +88,9 @@ public class ProductService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public void emptyStockQuantity(Long id){
         if (!productRepository.existsById(id)) throw new EntityNotFoundException("Product with id " + id + " not found", ErrorType.PRODUCT_NOT_FOUND);
-        productRepository.redefineStockQuantity(id);
+        productRepository.emptyStockQuantity(id);
     }
 
     public List<TotalValueInStockPerProduct> getTotalValueInStockPerProduct() {
