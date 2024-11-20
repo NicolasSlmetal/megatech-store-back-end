@@ -85,7 +85,9 @@ public class UserServiceTest {
         bcryptMock.when(() -> BCrypt.checkpw(anyString(), anyString())).thenReturn(true);
         when(tokenService.generateToken(userModel)).thenReturn("token");
 
-        Assertions.assertThrows(InvalidUserFieldException.class, () -> userService.login(loginDTO));
+        Exception ex = Assertions.assertThrows(InvalidUserFieldException.class, () -> userService.login(loginDTO));
+
+        Assertions.assertEquals("Invalid email or password", ex.getMessage());
         verify(userRepository, times(1)).findByEmail(loginDTO.email());
         verify(tokenService, never()).generateToken(userModel);
         bcryptMock.verify(() -> BCrypt.checkpw(loginDTO.password(), userModel.getPassword()), never());
@@ -101,7 +103,9 @@ public class UserServiceTest {
         when(userModel.getRole()).thenReturn(Role.CUSTOMER);
         bcryptMock.when(() -> BCrypt.checkpw(anyString(), anyString())).thenReturn(false);
 
-        Assertions.assertThrows(InvalidUserFieldException.class, () -> userService.login(loginDTO));
+        Exception ex = Assertions.assertThrows(InvalidUserFieldException.class, () -> userService.login(loginDTO));
+
+        Assertions.assertEquals("Invalid email or password", ex.getMessage());
         verify(userRepository, times(1)).findByEmail(loginDTO.email());
         bcryptMock.verify(() -> BCrypt.checkpw(loginDTO.password(), userModel.getPassword()),
                 times(1));
@@ -117,9 +121,12 @@ public class UserServiceTest {
         when(userModel.getPassword()).thenReturn("password");
         when(userModel.getRole()).thenReturn(Role.CUSTOMER);
         bcryptMock.when(() -> BCrypt.checkpw(anyString(), anyString())).thenReturn(true);
-        when(tokenService.generateToken(userModel)).thenThrow(new TokenErrorException("error"));
+        String errorMessage = "error while generating the token";
+        when(tokenService.generateToken(userModel)).thenThrow(new TokenErrorException(errorMessage));
 
-        Assertions.assertThrows(TokenErrorException.class, () -> userService.login(loginDTO));
+        Exception ex = Assertions.assertThrows(TokenErrorException.class, () -> userService.login(loginDTO));
+
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(tokenService, times(1)).generateToken(userModel);
         bcryptMock.verify(() -> BCrypt.checkpw(loginDTO.password(), userModel.getPassword()), times(1));
         verify(userRepository, times(1)).findByEmail(loginDTO.email());

@@ -167,7 +167,9 @@ public class CustomerServiceTest {
     public void testShouldThrowAnExceptionWhenCustomerDoesNotExist() {
         when(customerRepository.findById(ID)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.findById(ID));
+        Exception ex = Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.findById(ID));
+
+        Assertions.assertEquals("Customer with id " + ID + " not found", ex.getMessage());
         verify(customerRepository, times(NUMBER)).findById(ID);
 
     }
@@ -202,13 +204,15 @@ public class CustomerServiceTest {
         InsertCustomerDTO insertCustomerDTO = createInsertCustomerDTO();
         Customer customer = createCustomer();
         CustomerModel customerModel = createCustomerModel();
+        String errorMessage = "cpf exists";
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
-        doThrow(new InvalidCustomerFieldException("cpf exists", ErrorType.INVALID_CUSTOMER_CPF))
+        doThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.INVALID_CUSTOMER_CPF))
                 .when(standAloneSpy).validateIfCpfIsUsed(insertCustomerDTO.cpf());
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+        Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
 
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(standAloneSpy, times(1)).validateIfCpfIsUsed(insertCustomerDTO.cpf());
         verify(userService, never()).validateIfEmailExists(insertCustomerDTO.user().email());
         verify(addressService, never()).validateIfIsNotUsing(insertCustomerDTO.address());
@@ -225,12 +229,15 @@ public class CustomerServiceTest {
         InsertCustomerDTO insertCustomerDTO = createInsertCustomerDTO();
         Customer customer = createCustomer();
         CustomerModel customerModel = createCustomerModel();
+        String errorMessage = "email exists";
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
-        doThrow(new InvalidUserFieldException("invalid email", ErrorType.INVALID_USER_EMAIL))
+        doThrow(new InvalidUserFieldException(errorMessage, ErrorType.INVALID_USER_EMAIL))
                 .when(userService).validateIfEmailExists(insertCustomerDTO.user().email());
 
-        Assertions.assertThrows(InvalidUserFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+        Exception ex = Assertions.assertThrows(InvalidUserFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(standAloneSpy, times(1)).validateIfCpfIsUsed(insertCustomerDTO.cpf());
         verify(userService, times(1)).validateIfEmailExists(insertCustomerDTO.user().email());
         verify(addressService, never()).validateIfIsNotUsing(insertCustomerDTO.address());
@@ -247,13 +254,15 @@ public class CustomerServiceTest {
         InsertCustomerDTO insertCustomerDTO = createInsertCustomerDTO();
         Customer customer = createCustomer();
         CustomerModel customerModel = createCustomerModel();
+        String errorMessage = "address exists";
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
 
-        doThrow(new InvalidCustomerFieldException("exists address", ErrorType.ADDRESS_ALREADY_EXISTS))
+        doThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.ADDRESS_ALREADY_EXISTS))
                 .when(addressService).validateIfIsNotUsing(insertCustomerDTO.address());
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+        Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(standAloneSpy, times(1)).validateIfCpfIsUsed(insertCustomerDTO.cpf());
         verify(userService, times(1)).validateIfEmailExists(insertCustomerDTO.user().email());
         verify(addressService, times(1)).validateIfIsNotUsing(insertCustomerDTO.address());
@@ -270,12 +279,15 @@ public class CustomerServiceTest {
         InsertCustomerDTO insertCustomerDTO = createInsertCustomerDTO();
         Customer customer = createCustomer();
         CustomerModel customerModel = createCustomerModel();
+        String errorMessage = "some field is invalid";
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
         when(customerFactory.createEntityFromDTO(insertCustomerDTO))
-                .thenThrow(new InvalidCustomerFieldException("some field is invalid", ErrorType.INVALID_USER_EMAIL));
+                .thenThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.INVALID_USER_EMAIL));
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+        Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
+
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(standAloneSpy, times(1)).validateIfCpfIsUsed(insertCustomerDTO.cpf());
         verify(userService, times(1)).validateIfEmailExists(insertCustomerDTO.user().email());
         verify(addressService, times(1)).validateIfIsNotUsing(insertCustomerDTO.address());
@@ -325,7 +337,9 @@ public class CustomerServiceTest {
         setupMocksForUpdate(customer, customerModel, updateCustomerDTO, user, updatedCustomerModel);
         when(customerRepository.findById(ID)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> standAloneSpy.update(updateCustomerDTO, ID));
+        Exception ex = Assertions.assertThrows(EntityNotFoundException.class, () -> standAloneSpy.update(updateCustomerDTO, ID));
+
+        Assertions.assertEquals("Customer with id " + ID + " not found", ex.getMessage());
         verify(customerRepository, times(1)).findById(ID);
         verify(customerFactory, never()).createEntityFromModel(customerModel);
         verify(customer, never()).update(updateCustomerDTO);
@@ -342,13 +356,16 @@ public class CustomerServiceTest {
         User user = mock(User.class);
         CustomerModel customerModel = createCustomerModel();
         CustomerModel updatedCustomerModel = createCustomerModel();
+        String errorMessage = "some field is invalid";
 
         setupMocksForUpdate(customer, customerModel, updateCustomerDTO, user, updatedCustomerModel);
-        doThrow(new InvalidCustomerFieldException("some data is invalid", null))
+        doThrow(new InvalidCustomerFieldException(errorMessage, null))
                 .when(customer).update(updateCustomerDTO);
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class,
+        Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class,
                 () -> standAloneSpy.update(updateCustomerDTO, ID));
+
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(customerRepository, times(1)).findById(ID);
         verify(customerFactory, times(1)).createEntityFromModel(customerModel);
         verify(customer, times(1)).update(updateCustomerDTO);
@@ -365,12 +382,16 @@ public class CustomerServiceTest {
         User user = mock(User.class);
         CustomerModel customerModel = createCustomerModel();
         CustomerModel updatedCustomerModel = createCustomerModel();
+        String errorMessage = "some field is invalid";
 
         setupMocksForUpdate(customer, customerModel, updateCustomerDTO, user, updatedCustomerModel);
-        doThrow(new InvalidCustomerFieldException("some data is invalid", null))
+        doThrow(new InvalidCustomerFieldException(errorMessage, null))
                 .when(standAloneSpy).validateForUpdatedFields(customer, customer);
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class,() ->  standAloneSpy.update(updateCustomerDTO, ID));
+        Exception ex = Assertions
+                .assertThrows(InvalidCustomerFieldException.class,() ->  standAloneSpy.update(updateCustomerDTO, ID));
+
+        Assertions.assertEquals(errorMessage, ex.getMessage());
         verify(customerRepository, times(1)).findById(ID);
         verify(customerFactory, times(1)).createEntityFromModel(customerModel);
         verify(customer, times(1)).update(updateCustomerDTO);
@@ -385,12 +406,17 @@ public class CustomerServiceTest {
         when(customerRepository.existsById(ID)).thenReturn(true);
 
         Assertions.assertDoesNotThrow(() -> customerService.delete(ID));
+        verify(customerRepository, times(1)).existsById(ID);
+        verify(customerRepository, times(1)).deleteById(ID);
     }
 
     @Test
     @DisplayName("Should throw an exception when customer does not exist")
     public void testShouldThrowAnException() {
         when(customerRepository.existsById(ID)).thenReturn(false);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.delete(ID));
+        Exception ex = Assertions.assertThrows(EntityNotFoundException.class, () -> customerService.delete(ID));
+
+        Assertions.assertEquals("Customer with id " + ID + " not found", ex.getMessage());
+        verify(customerRepository, times(1)).existsById(ID);
     }
 }

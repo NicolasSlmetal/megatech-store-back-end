@@ -62,7 +62,9 @@ public class AddressServiceTest {
         when(addressRepository.findByStreetAndNumberAndCityAndStateAndZipcode("street", 1, "city", "state", "zip"))
                 .thenReturn(List.of(buildAddressModel()));
 
-        Assertions.assertThrows(InvalidCustomerFieldException.class, () -> addressService.validateIfIsNotUsing(addressDTO));
+        Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class, () -> addressService.validateIfIsNotUsing(addressDTO));
+
+        Assertions.assertEquals("Address cannot be used", ex.getMessage());
         verify(addressRepository, times(1))
                 .findByStreetAndNumberAndCityAndStateAndZipcode("street", 1, "city", "state", "zip");
     }
