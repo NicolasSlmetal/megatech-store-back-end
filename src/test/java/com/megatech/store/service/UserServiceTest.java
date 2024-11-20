@@ -141,7 +141,7 @@ public class UserServiceTest {
         String email = "email";
         when(userRepository.existsByEmail(email)).thenReturn(true);
 
-        Assertions.assertDoesNotThrow(() -> userService.validateIfEmailExists(email));
+        Assertions.assertThrows(InvalidUserFieldException.class,() -> userService.validateIfEmailExists(email));
         verify(userRepository, times(1)).existsByEmail(email);
     }
 }
