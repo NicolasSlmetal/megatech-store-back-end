@@ -18,6 +18,7 @@ import com.megatech.store.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 public class CustomerServiceTest {
 
     public static final long ID = 1L;
@@ -69,6 +71,11 @@ public class CustomerServiceTest {
         mockedBCrypt.clearInvocations();
         MockitoAnnotations.openMocks(this);
         standAloneSpy = spy(customerService);
+    }
+
+    @AfterAll
+    public static void unregisterStaticMocks() {
+        mockedBCrypt.close();
     }
 
     public CustomerDTO createCustomerDTO() {
@@ -156,7 +163,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    @DisplayName("should return a customer when repository finds him by your id")
+    @DisplayName("should throw an exception when a customer is not found")
     public void testShouldThrowAnExceptionWhenCustomerDoesNotExist() {
         when(customerRepository.findById(ID)).thenReturn(Optional.empty());
 

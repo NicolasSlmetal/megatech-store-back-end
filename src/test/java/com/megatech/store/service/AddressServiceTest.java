@@ -43,7 +43,7 @@ public class AddressServiceTest {
     }
 
     @Test
-    @DisplayName("should not throw an exception if a non existing address is provided")
+    @DisplayName("should accept an address that  not exists")
     public void testValidateIfNotUsingShouldNotThrowException() {
         AddressDTO addressDTO = new AddressDTO("street", 1, "city", "state", "zip");
         when(addressRepository
@@ -56,7 +56,7 @@ public class AddressServiceTest {
     }
 
     @Test
-    @DisplayName("should throw an exception when repository returns a not empty list")
+    @DisplayName("should throw an exception when repository returns a non empty list")
     public void testValidateIfNotUsingShouldThrowException() {
         AddressDTO addressDTO = new AddressDTO("street", 1, "city", "state", "zip");
         when(addressRepository.findByStreetAndNumberAndCityAndStateAndZipcode("street", 1, "city", "state", "zip"))
