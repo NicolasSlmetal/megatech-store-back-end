@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
-import org.mockito.stubbing.Stubber;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -28,7 +26,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-@Slf4j
 @ActiveProfiles("test")
 public class ProductServiceTest {
 
