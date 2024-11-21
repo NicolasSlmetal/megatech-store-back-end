@@ -6,8 +6,6 @@ import com.megatech.store.domain.Purchase;
 import com.megatech.store.dtos.purchase.CartItemDTO;
 import com.megatech.store.dtos.purchase.InsertPurchaseDTO;
 import com.megatech.store.dtos.purchase.PurchaseDTO;
-import com.megatech.store.exceptions.EntityNotFoundException;
-import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.factory.PurchaseFactory;
 import com.megatech.store.model.*;
 import com.megatech.store.projections.TotalValueSoldPerProduct;
@@ -46,9 +44,7 @@ public class PurchaseService {
                 .collect(Collectors.toMap((cartItemDTO) -> products
                         .stream()
                         .filter(product -> cartItemDTO.productId().equals(product.getId()))
-                        .findFirst()
-                        .orElseThrow(() ->
-                                new EntityNotFoundException("Product with id " + cartItemDTO.productId() + " not found", ErrorType.PRODUCT_NOT_FOUND)), CartItemDTO::quantity));
+                        .findFirst().get(), CartItemDTO::quantity));
 
         Purchase purchase = purchaseFactory.createEntityFromCustomerAndProductMapping(savedCustomer, groupQuantityByProduct);
 
