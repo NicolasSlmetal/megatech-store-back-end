@@ -76,7 +76,8 @@ public class AddressRepositoryTest {
     public void testShouldReturnAnEmptyListWhenANonExistingParameterIsProvided() {
         this.insertDefaultData();
 
-        List<AddressModel> result = addressRepository.findByStreetAndNumberAndCityAndStateAndZipcode("street2", 1, "city", "state", "zipcode");
+        List<AddressModel> result = addressRepository
+                .findByStreetAndNumberAndCityAndStateAndZipcode("street2", 1, "city", "state", "zipcode");
 
         Assertions.assertTrue(result.isEmpty());
     }
