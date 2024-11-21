@@ -1,6 +1,5 @@
 package com.megatech.store.repository;
 
-import com.megatech.store.model.ProductModel;
 import com.megatech.store.model.PurchaseModel;
 import com.megatech.store.projections.TotalValueSoldPerProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
