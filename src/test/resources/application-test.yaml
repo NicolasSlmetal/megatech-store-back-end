@@ -1,5 +1,14 @@
 spring:
   flyway:
     enabled: false
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:megatech_testr
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+  h2:
+    console:
+      path: /h2-console
