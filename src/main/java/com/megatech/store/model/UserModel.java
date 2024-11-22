@@ -31,12 +31,4 @@ public class UserModel implements Model {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public UserModel(User user) {
-        if (user.getId() != null) {
-            setId(user.getId());
-        }
-        setEmail(user.getEmail());
-        setPassword(user.getPassword());
-        setRole(user.getRole());
-    }
 }

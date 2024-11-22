@@ -16,17 +16,6 @@ public class Address implements Entity<AddressDTO> {
     private String state;
     private String zipcode;
 
-    public Address() {
-
-    }
-
-    public Address(AddressDTO addressDTO) {
-        setStreet(addressDTO.street());
-        setNumber(addressDTO.number());
-        setCity(addressDTO.city());
-        setState(addressDTO.state());
-        setZipCode(addressDTO.zipcode());
-    }
 
     public Long getId() {
         return id;

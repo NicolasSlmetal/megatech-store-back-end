@@ -25,23 +25,6 @@ public class User implements Entity<UserDTO>, Cloneable {
     private String password;
     private Role role;
 
-    public User() {
-
-    }
-
-    public User(UserDTO userDTO, Role role) {
-        setEmail(userDTO.email());
-        setPassword(userDTO.password());
-        setRole(role);
-    }
-
-    public User(UserModel userModel){
-        setId(userModel.getId());
-        setEmail(userModel.getEmail());
-        setPassword(userModel.getPassword());
-        setRole(userModel.getRole());
-    }
-
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();

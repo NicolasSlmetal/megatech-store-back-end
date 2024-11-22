@@ -41,16 +41,4 @@ public class CustomerModel implements Model {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<AddressModel> addresses;
 
-    public CustomerModel(Customer customer) {
-        setName(customer.getName());
-        setCpf(customer.getCpf());
-        setAddresses(customer.getAddresses().stream().map(AddressModel::new).toList());
-        getAddresses().forEach(addressModel -> addressModel.setCustomer(this));
-        if (customer.getRegistrationDate() != null) {
-            setRegistrationDate(customer.getRegistrationDate());
-        }
-        setUser(new UserModel(customer.getUser()));
-        setId(getUser().getId());
-    }
-
 }

@@ -6,7 +6,6 @@ import com.megatech.store.dtos.user.UserDTO;
 import com.megatech.store.exceptions.ErrorType;
 import com.megatech.store.exceptions.InvalidCPFException;
 import com.megatech.store.exceptions.InvalidCustomerFieldException;
-import com.megatech.store.model.CustomerModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,22 +23,6 @@ public class Customer implements Cloneable, Entity<UpdateCustomerDTO> {
     private LocalDate registrationDate;
     private User user;
     private final List<Address> addresses = new ArrayList<>();
-
-    public Customer() {
-
-    }
-
-    public Customer(InsertCustomerDTO insertCustomerDTO) {
-        setName(insertCustomerDTO.name());
-        setCpf(insertCustomerDTO.cpf());
-    }
-
-    public Customer(CustomerModel customerModel) {
-        setUser(new User(customerModel.getUser()));
-        setName(customerModel.getName());
-        setCpf(customerModel.getCpf());
-        setRegistrationDate(customerModel.getRegistrationDate());
-    }
 
     public void update(UpdateCustomerDTO customerDTO) {
         if (customerDTO.name() != null) {

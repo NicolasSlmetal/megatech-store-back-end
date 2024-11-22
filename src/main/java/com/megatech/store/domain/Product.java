@@ -18,26 +18,6 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     private Integer stockQuantity;
     private LocalDateTime entryDate;
 
-    public Product() {
-
-    }
-    public Product(InsertProductDTO productDTO) {
-        setName(productDTO.name());
-        setImage(productDTO.image());
-        setManufacturer(productDTO.manufacturer());
-        setPrice(productDTO.price());
-        setStockQuantity(productDTO.stockQuantity());
-    }
-    public Product(ProductModel productModel) {
-        setId(productModel.getId());
-        setName(productModel.getName());
-        setImage(productModel.getImage());
-        setManufacturer(productModel.getManufacturer());
-        setPrice(productModel.getPrice());
-        setStockQuantity(productModel.getStockQuantity());
-        setEntryDate(productModel.getEntryDate());
-    }
-
     public void update(UpdateProductDTO updateProductDTO) {
         if (updateProductDTO.name() != null)
             setName(updateProductDTO.name());
@@ -64,7 +44,9 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setImage(String image) {
-        if (image == null || image.isEmpty()) throw new InvalidProductFieldException("Image cannot be null or empty", ErrorType.INVALID_PRODUCT_IMAGE);
+        if (image == null || image.isEmpty()) {
+            throw new InvalidProductFieldException("Image cannot be null or empty", ErrorType.INVALID_PRODUCT_IMAGE);
+        }
         this.image = image;
     }
 
@@ -73,7 +55,9 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setPrice(Double price) {
-        if (price <= 0) throw new InvalidProductFieldException("Price cannot be negative or zero", ErrorType.INVALID_PRODUCT_PRICE);
+        if (price <= 0) {
+            throw new InvalidProductFieldException("Price cannot be negative or zero", ErrorType.INVALID_PRODUCT_PRICE);
+        }
         this.price = price;
     }
 
@@ -82,8 +66,9 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setManufacturer(String manufacturer) {
-        if (manufacturer == null || manufacturer.isBlank())
+        if (manufacturer == null || manufacturer.isBlank()) {
             throw new InvalidProductFieldException("Manufacturer cannot be null or empty", ErrorType.INVALID_PRODUCT_MANUFACTURER);
+        }
         this.manufacturer = manufacturer;
     }
 
@@ -92,8 +77,9 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setName(String name) {
-        if (name == null || name.isBlank())
+        if (name == null || name.isBlank()) {
             throw new InvalidProductFieldException("Name cannot be null or empty", ErrorType.INVALID_PRODUCT_NAME);
+        }
         this.name = name;
     }
 

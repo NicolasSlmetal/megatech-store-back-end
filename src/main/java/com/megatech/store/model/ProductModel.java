@@ -44,12 +44,5 @@ public class ProductModel implements Model {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime entryDate;
 
-    public ProductModel(Product product) {
-        this.name = product.getName();
-        this.image = product.getImage();
-        this.manufacturer = product.getManufacturer();
-        this.price = product.getPrice();
-        this.stockQuantity = product.getStockQuantity();
-    }
 
 }
