@@ -1,13 +1,11 @@
 package com.megatech.store.model;
 
-import com.megatech.store.domain.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 
 @Entity
 @Table(name = "tb_address")
@@ -41,11 +39,4 @@ public class AddressModel implements Model {
     @JoinColumn(name = "add_customer_id", referencedColumnName = "cst_id")
     private CustomerModel customer;
 
-    public AddressModel(Address address) {
-        setStreet(address.getStreet());
-        setNumber(address.getNumber());
-        setCity(address.getCity());
-        setState(address.getState());
-        setZipcode(address.getZipcode());
-    }
 }
