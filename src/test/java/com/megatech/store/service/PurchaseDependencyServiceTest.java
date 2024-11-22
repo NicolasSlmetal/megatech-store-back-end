@@ -2,10 +2,13 @@ package com.megatech.store.service;
 
 import com.megatech.store.domain.Customer;
 import com.megatech.store.domain.Product;
+import com.megatech.store.dtos.customer.InsertCustomerDTO;
+import com.megatech.store.dtos.products.InsertProductDTO;
 import com.megatech.store.dtos.purchase.CartItemDTO;
 import com.megatech.store.dtos.purchase.InsertPurchaseDTO;
 import com.megatech.store.exceptions.EntityNotFoundException;
 import com.megatech.store.factory.CustomerFactory;
+import com.megatech.store.factory.EntityModelFactory;
 import com.megatech.store.factory.ProductFactory;
 import com.megatech.store.model.CustomerModel;
 import com.megatech.store.model.ProductModel;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -30,19 +34,24 @@ public class PurchaseDependencyServiceTest {
 
     public static final long CUSTOMER_ID = 1L;
     @Mock
-    private ProductRepository productRepository;
+    private EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory;
     @Mock
     private CustomerRepository customerRepository;
     @Mock
-    private ProductFactory productFactory;
+    private ProductRepository productRepository;
     @Mock
-    private CustomerFactory customerFactory;
+    private EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory = mock(ProductFactory.class);
     @InjectMocks
     private PurchaseDependencyService purchaseDependencyService;
 
     @BeforeEach
     public void initMocks() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        reset(customerFactory, customerRepository);
     }
 
     @Test
@@ -66,7 +75,6 @@ public class PurchaseDependencyServiceTest {
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
         when(customerFactory.createEntityFromModel(any())).thenReturn(any());
         String errorMessage = "Customer not found";
-
         Exception ex = Assertions
                 .assertThrows(EntityNotFoundException.class, () -> purchaseDependencyService.fetchCustomer(CUSTOMER_ID));
         Assertions.assertEquals(errorMessage, ex.getMessage());
