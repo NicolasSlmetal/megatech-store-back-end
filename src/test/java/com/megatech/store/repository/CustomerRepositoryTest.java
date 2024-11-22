@@ -40,7 +40,7 @@ public class CustomerRepositoryTest {
     }
 
     @Test
-    @DisplayName("Should return true when a CPF does not exist")
+    @DisplayName("Should return false when a CPF does not exist")
     public void testShouldReturnFalseWhenCPFDoesNotExist() {
         insertDefaultData();
 
