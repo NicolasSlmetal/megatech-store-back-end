@@ -14,6 +14,7 @@ import com.megatech.store.model.ProductQuantityMappingModel;
 import com.megatech.store.model.ProductModel;
 import com.megatech.store.repository.CustomerRepository;
 import com.megatech.store.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,17 +22,15 @@ import java.util.List;
 @Service
 public class PurchaseDependencyService {
 
-    private final EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory;
-    private final CustomerRepository customerRepository;
-    private final EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory;
-    private final ProductRepository productRepository;
+    @Autowired
+    private  EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory;
+    @Autowired
+    private  CustomerRepository customerRepository;
+    @Autowired
+    private  EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory;
+    @Autowired
+    private  ProductRepository productRepository;
 
-    public PurchaseDependencyService(EntityModelFactory<Customer, CustomerModel, InsertCustomerDTO> customerFactory, CustomerRepository customerRepository, ProductRepository productRepository, EntityModelFactory<Product, ProductModel, InsertProductDTO> productFactory) {
-        this.customerFactory = customerFactory;
-        this.customerRepository = customerRepository;
-        this.productFactory = productFactory;
-        this.productRepository = productRepository;
-    }
 
     public Customer fetchCustomer(Long customerId) {
         return customerFactory
