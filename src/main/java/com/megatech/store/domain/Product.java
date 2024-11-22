@@ -102,8 +102,9 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setStockQuantity(Integer stockQuantity) {
-        if (stockQuantity < 0)
+        if (stockQuantity == null || stockQuantity < 0) {
             throw new InvalidProductFieldException("Stock quantity cannot be negative", ErrorType.INVALID_PRODUCT_STOCK_QUANTITY);
+        }
         this.stockQuantity = stockQuantity;
     }
 
@@ -112,10 +113,12 @@ public class Product  implements Cloneable, Entity<UpdateProductDTO> {
     }
 
     public void setEntryDate(LocalDateTime entryDate) {
-        if (entryDate == null)
+        if (entryDate == null) {
             throw new InvalidProductFieldException("Entry date cannot be null", ErrorType.INVALID_DATE_PARAMETER);
-        if (entryDate.isAfter(LocalDateTime.now()))
+        }
+        if (entryDate.isAfter(LocalDateTime.now())) {
             throw new InvalidProductFieldException("Entry date cannot be after now", ErrorType.INVALID_DATE_PARAMETER);
+        }
         this.entryDate = entryDate;
     }
 
