@@ -45,7 +45,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<DetailedProductDTO> create(@RequestBody @Valid InsertProductDTO insertProductDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<DetailedProductDTO> save(@RequestBody @Valid InsertProductDTO insertProductDTO, UriComponentsBuilder uriComponentsBuilder) {
         DetailedProductDTO savedProduct = productService.save(insertProductDTO);
         URI uri = uriComponentsBuilder.path("/products/{id}").buildAndExpand(savedProduct.id()).toUri();
         return ResponseEntity.created(uri).body(savedProduct);
