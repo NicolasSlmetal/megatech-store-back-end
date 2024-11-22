@@ -58,7 +58,8 @@ public class CustomerFactory implements EntityModelFactory<Customer, CustomerMod
         model.setName(entity.getName());
         model.setCpf(entity.getCpf());
         model.setUser(userFactory.createModelFromEntity(entity.getUser()));
-        model.setAddresses(entity.getAddresses().stream().map(AddressModel::new).toList());
+        model.setAddresses(entity.getAddresses().stream().map(addressFactory::createModelFromEntity)
+                .toList());
         model.getAddresses().forEach(address -> address.setCustomer(model));
         return model;
     }
