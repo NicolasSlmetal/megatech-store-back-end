@@ -38,7 +38,7 @@ public class AddressFactory implements EntityModelFactory<Address, AddressModel,
         model.setNumber(entity.getNumber());
         model.setCity(entity.getCity());
         model.setState(entity.getState());
-        model.setZipcode(model.getZipcode());
+        model.setZipcode(entity.getZipcode());
         return model;
     }
 }
