@@ -29,7 +29,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll());
     }
 
-    @GetMapping("/zero")
+    @GetMapping("/stock/zero")
     public ResponseEntity<List<DetailedProductDTO>> findAllWhereStockIsZero() {
         return ResponseEntity.ok(productService.findAllWhereStockIsZero());
     }
@@ -39,7 +39,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    @GetMapping("/totalValue")
+    @GetMapping("/stock/value")
     public ResponseEntity<List<TotalValueInStockPerProduct>> getTotalValueInStockPerProduct(){
         return ResponseEntity.ok(productService.getTotalValueInStockPerProduct());
     }

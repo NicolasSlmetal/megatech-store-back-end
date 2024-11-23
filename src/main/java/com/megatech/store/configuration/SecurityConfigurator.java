@@ -45,15 +45,17 @@ public class SecurityConfigurator {
                 .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests
                     .requestMatchers("/login").permitAll()
-                    .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT +"/zero").hasAuthority(Role.ADMIN.toString())
-                    .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT+"/totalValue").hasAuthority(Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT +"/stock/**").hasAuthority(Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT + "/**").permitAll()
                     .requestMatchers(HttpMethod.POST, PRODUCT_ENDPOINT).hasAuthority(Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.PUT, PRODUCT_ENDPOINT + "/**").hasAuthority(Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.DELETE, PRODUCT_ENDPOINT + "/**").hasAuthority(Role.ADMIN.toString())
-                    .requestMatchers(CUSTOMER_ENDPOINT + "/me").authenticated()
-                    .requestMatchers(CUSTOMER_ENDPOINT + "/**").permitAll()
-                    .requestMatchers(PURCHASE_ENDPOINT + "/totalValue").hasAuthority(Role.ADMIN.toString())
+                    .requestMatchers(CUSTOMER_ENDPOINT + "/me/**").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, CUSTOMER_ENDPOINT + "/**").hasAuthority(Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.GET, CUSTOMER_ENDPOINT + "/**").hasAuthority(Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.POST, CUSTOMER_ENDPOINT).permitAll()
+                    .requestMatchers(HttpMethod.PUT, CUSTOMER_ENDPOINT + "/**").hasAuthority(Role.ADMIN.toString())
+                    .requestMatchers(PURCHASE_ENDPOINT + "/total-value").hasAuthority(Role.ADMIN.toString())
                     .requestMatchers(PURCHASE_ENDPOINT + "/**").authenticated()
 
                 ).addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)

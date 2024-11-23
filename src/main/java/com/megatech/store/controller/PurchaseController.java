@@ -15,7 +15,6 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/purchases")
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
@@ -26,21 +25,21 @@ public class PurchaseController {
         this.userAuthenticationService = userAuthenticationService;
     }
 
-    @PostMapping
+    @PostMapping("/purchases")
     public ResponseEntity<PurchaseDTO> insertPurchase(@RequestBody @Valid InsertPurchaseDTO purchaseDTO, UriComponentsBuilder uriBuilder) {
         UserAuthentication authentication = userAuthenticationService.getCurrentUser();
         PurchaseDTO purchase = purchaseService.insertPurchase(purchaseDTO, authentication.getUser().getId());
-        URI uri = uriBuilder.path("/me").buildAndExpand(purchase).toUri();
+        URI uri = uriBuilder.path("/customer/me/purchases").buildAndExpand(purchase).toUri();
         return ResponseEntity.created(uri).body(purchase);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/customers/me/purchases")
     public ResponseEntity<List<PurchaseDTO>> findByCustomerId() {
         UserAuthentication authentication = userAuthenticationService.getCurrentUser();
         return ResponseEntity.ok(purchaseService.findByCustomerId(authentication.getUser().getId()));
     }
 
-    @GetMapping("/totalValue")
+    @GetMapping("/purchases/total-value-by-product")
     public ResponseEntity<List<TotalValueSoldPerProduct>> getTotalValueSoldPerProduct() {
         return ResponseEntity.ok(purchaseService.getTotalValueSoldPerProduct());
     }
