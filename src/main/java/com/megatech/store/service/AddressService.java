@@ -28,7 +28,7 @@ public class AddressService {
                         address.state(),
                         address.zipcode());
         if (!existingAddress.isEmpty()) {
-            throw new InvalidCustomerFieldException("Address cannot be used", ErrorType.ADDRESS_ALREADY_EXISTS);
+            throw new InvalidCustomerFieldException("Address cannot be used", ErrorType.INVALID_ADDRESS_DATA);
         }
     }
 }

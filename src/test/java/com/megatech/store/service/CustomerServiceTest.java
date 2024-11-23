@@ -204,7 +204,7 @@ public class CustomerServiceTest {
         InsertCustomerDTO insertCustomerDTO = createInsertCustomerDTO();
         Customer customer = createCustomer();
         CustomerModel customerModel = createCustomerModel();
-        String errorMessage = "cpf exists";
+        String errorMessage = "cpf is invalid";
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
         doThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.INVALID_CUSTOMER_CPF))
@@ -258,7 +258,7 @@ public class CustomerServiceTest {
 
         setupMockForSave(insertCustomerDTO, customer, customerModel);
 
-        doThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.ADDRESS_ALREADY_EXISTS))
+        doThrow(new InvalidCustomerFieldException(errorMessage, ErrorType.INVALID_ADDRESS_DATA))
                 .when(addressService).validateIfIsNotUsing(insertCustomerDTO.address());
 
         Exception ex = Assertions.assertThrows(InvalidCustomerFieldException.class, () -> standAloneSpy.save(insertCustomerDTO));
