@@ -60,8 +60,6 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.update(customerDTO, id));
     }
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         customerService.delete(id);
