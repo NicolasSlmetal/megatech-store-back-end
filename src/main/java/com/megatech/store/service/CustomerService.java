@@ -65,7 +65,7 @@ public class CustomerService {
     public void validateIfCpfIsUsed(String cpf){
         String cpfDigits = cpf.replaceAll("[^0-9]", "");
         if (customerRepository.existsByCpf(cpfDigits)){
-            throw new InvalidCustomerFieldException("CPF already exists", ErrorType.INVALID_CUSTOMER_CPF);
+            throw new InvalidCustomerFieldException("CPF is invalid", ErrorType.INVALID_CUSTOMER_CPF);
         }
     }
 
