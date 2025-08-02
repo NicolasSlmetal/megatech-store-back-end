@@ -45,6 +45,7 @@ public class SecurityConfigurator {
                 .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests
                     .requestMatchers("/login").permitAll()
+                    .requestMatchers("/addresses/**").permitAll()
                     .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT +"/stock/**").hasAuthority(Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.GET, PRODUCT_ENDPOINT + "/**").permitAll()
                     .requestMatchers(HttpMethod.POST, PRODUCT_ENDPOINT).hasAuthority(Role.ADMIN.toString())
